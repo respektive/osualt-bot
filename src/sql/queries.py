@@ -595,7 +595,7 @@ async def get_completion(ctx, type, di):
     description = "```pascal\n"
     for rng in ranges:
         completion = 100
-        di[range_arg] = rng.lower()
+        di[range_arg] = str(rng).lower()
         if not type == "grade_breakdown":
             beatmap_count = await check_beatmaps(ctx, di.copy())
         di["-user"] = user_id
