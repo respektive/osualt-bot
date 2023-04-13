@@ -96,11 +96,9 @@ async def generateosdb(ctx, di):
     count = count + where
 
     print(count)
-    await db.connect()
     count_res = await db.execute_query(count)
     count = count_res[0][0]
     rows = await db.execute_query(query)
-    await db.close()
 
     name = "GENERATED-COLLECTION"
 
@@ -214,9 +212,7 @@ async def getfile(ctx, di):
         return
     
     print(type)
-    await db.connect()
     await db.export_to_csv(type, "tmp.txt")
-    await db.close()
 
     name = None
     if di.get("-name"):
@@ -241,7 +237,6 @@ async def getfile(ctx, di):
 
 async def updatelists(client):
     channel = client.get_channel(793570054008340511)
-    await db.connect()
     li = await db.execute_query("select * from newfcs")
     if len(li) > 0:
         for entry in li:
@@ -404,4 +399,3 @@ CS **{b[8]:.1f}** • AR **{b[9]:.1f}** • OD **{b[10]:.1f}** • HP **{b[11]:.
                 await channel.send(embed=embed)
 
             await db.execute_query("delete from newdtfcs where beatmap_id = " + str(beatmap))
-    await db.close()

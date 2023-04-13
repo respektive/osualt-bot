@@ -9,28 +9,20 @@ db = Database()
 
 async def register_user(user_id):
     query = "INSERT INTO priorityuser VALUES ($1) ON CONFLICT DO NOTHING"
-    await db.connect()
     await db.execute_query(query, int(user_id))
-    await db.close()
 
 async def insert_into_scorequeue(beatmap_id, user_id):
     query = "INSERT INTO scorequeue VALUES($1, $2)"
-    await db.connect()
     await db.execute_query(query, user_id, beatmap_id)
-    await db.close()
 
 async def insert_into_queue(rows, user_id):
     query = "INSERT INTO queue VALUES($1, $2)"
-    await db.connect()
     for row in rows:
         await db.execute_query(query, user_id, row[0])
-    await db.close()
 
 async def get_queue_length():
     query = "SELECT COUNT(*) FROM queue"
-    await db.connect()
     result = await db.execute_query(query)
-    await db.close()
     count = result[0][0]
     return "Queue length: " + str(count) + "\nETA: ~" + str(math.ceil(count*2/60)) + " minutes"
 
@@ -43,9 +35,7 @@ async def check_profile(ctx, stat, di):
     #build and execute the leaderboard creating query
     query = await build_leaderboard(ctx, base, di)
     print(query)
-    await db.connect()
     result = await db.execute_query(query)
-    await db.close()
 
     return result
 
@@ -59,9 +49,7 @@ async def check_mappers(ctx, stat, di):
     #build and execute the leaderboard creating query
     query = await build_leaderboard(ctx, base, di)
     print(query)
-    await db.connect()
     result = await db.execute_query(query)
-    await db.close()
 
     return result
 
@@ -93,9 +81,7 @@ async def check_array_stats(ctx, operation, table, aggregate, di, title=None):
 
     query = await build_leaderboard(ctx, base, di)
     print(query)
-    await db.connect()
     rows = await db.execute_query(query)
-    await db.close()
 
     if title == None:
         title = "Result"
@@ -171,9 +157,7 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
 
     query = await build_leaderboard(ctx, base, di)
     print(query)
-    await db.connect()
     rows = await db.execute_query(query)
-    await db.close()
 
     if embedtitle == None:
         embedtitle = "Result"
@@ -183,7 +167,6 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
         embedtitle = embedtitle + " | " + f"{beatmap_count:,}" + " beatmaps"
         if mapsets:
             embedtitle += "ets"
-
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
@@ -241,11 +224,7 @@ async def check_beatmaps(ctx, di, tables=None, sets=False):
         query = query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
     query = query + build_where_clause(di)
     print(query)
-
-
-    await db.connect()
     res = await db.execute_query(query)
-    await db.close()
     ans = res[0][0]
     print(ans)
     if operation == "sum(length)" and not "-noformat" in di:
@@ -280,9 +259,7 @@ async def check_weighted_pp(ctx, operation, di, embedtitle=None):
 
     print(query)
 
-    await db.connect()
     rows = await db.execute_query(query)
-    await db.close()
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
@@ -308,10 +285,7 @@ async def check_weighted_score(ctx, operation, di, embedtitle=None):
     query = await build_leaderboard(ctx, base, di)
 
     print(query)
-
-    await db.connect()
     rows = await db.execute_query(query)
-    await db.close()
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
@@ -406,14 +380,11 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
 
     count_query = count_query + build_where_clause(di, unique_table)
     print("Count query: " + count_query)
-    await db.connect()
     count_res = await db.execute_query(count_query)
     if len(count_res) > 0:
         count = count_res[0][0]
-    await db.close()
     if returnCount == True:
         return count
-
 
     query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, round(stars, 2) as stars"
 
@@ -465,10 +436,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
         total_missing_query = query
     query = query + " order by " + order + " " + direction + ", artist limit " + str(limit) + " offset " + str(offset)
     print("Query: " + query)
-
-    await db.connect()
     res = await db.execute_query(query)
-    await db.close()
 
     embed = discord.Embed(colour=discord.Colour(0xcc5288))
     total_missing_score = ""
@@ -501,9 +469,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
 
     if missingScore:
         total_missing_query = "select sum(missing_score) from (" + total_missing_query + ") as total_missing_score"
-        await db.connect()
         res = await db.execute_query(total_missing_query)
-        await db.close()
         score_sum = res[0][0]
         if score_sum != None:
             total_missing_score = " | Total missing score: " + "{:,}".format(score_sum)
@@ -532,10 +498,7 @@ async def get_beatmap_ids(di, tables=None):
         query = query + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
     query = query + build_where_clause(di)
     print(query)
-    await db.connect()
     res = await db.execute_query(query)
-    await db.close()
-
     return res
 
 async def get_completion(ctx, type, di):
@@ -674,9 +637,7 @@ async def get_pack_completion(ctx, di):
 
 async def get_username(user_id):
     query = "SELECT username FROM users2 WHERE user_id = $1"
-    await db.connect()
     res = await db.execute_query(query, user_id)
-    await db.close()
     if len(res) > 0:
         username = res[0][0]
         return username
@@ -686,9 +647,7 @@ async def get_username(user_id):
 async def get_user_id(ctx, args):
     if not args.get("-u"):
         query = "SELECT user_id FROM discorduser WHERE discord_id = $1"
-        await db.connect()
         res = await db.execute_query(query, str(ctx.message.author.id))
-        await db.close()
         if len(res) > 0:
             user_id = res[0][0]
             return user_id
@@ -698,9 +657,7 @@ async def get_user_id(ctx, args):
     if not str(args["-u"]).isnumeric():
         username = str(args["-u"]).replace("+", " ").lower()
         query = "SELECT user_id FROM users2 WHERE LOWER(username) = $1"
-        await db.connect()
         res = await db.execute_query(query, str(username))
-        await db.close()
         if len(res) > 0:
             user_id = res[0][0]
             return user_id
@@ -730,12 +687,10 @@ async def build_leaderboard(ctx, base, di, user=None):
         user = str(di["-u"]).replace("+", " ").lower()
     else:
         user_id = await get_user_id(ctx, di)
-        await db.connect()
         query = "SELECT username FROM users2 WHERE user_id = $1"
         res = await db.execute_query(query, int(user_id))
         if len(res) > 0:
             user = str(res[0][0]).lower()
-        await db.close()
 
     rank = "select username, stat, ROW_NUMBER() OVER(order by stat " + direction + ") as rank from (" + base + ") base"
     data = "select rank, username, stat from (" + rank + ") r order by rank"
