@@ -2,6 +2,7 @@ import datetime
 from textwrap import wrap
 import json
 import requests
+import dateutil.parser
 
 def catbox_upload(file_name, file_path):
     catbox_api = "https://litterbox.catbox.moe/resources/internals/api.php"
@@ -98,8 +99,8 @@ def check_date_string(date_string):
     elif date_string.lower() == "yesterday":
         return (now - datetime.timedelta(days=1)).date().strftime(date_format)
     else:
-        date = datetime.datetime.strptime(date_string, "%y-%m-%d")
-        return date.replace(tzinfo=datetime.timezone.utc).strftime('%Y-%m-%d %H:%M:%S')
+        date = dateutil.parser.parse(date_string)
+        return date.isoformat()
 
 def get_mods_enum(mods, diff=False):
     mods = wrap(mods, 2)
