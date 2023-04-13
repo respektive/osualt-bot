@@ -69,6 +69,7 @@ COG_FLAGS = {
 
 EXTRA_COMMAND_FLAGS = {
     "generateosdb": ["global", "advanced", "beatmap"],
+    "getfile": ["advanced", "beatmap"],
 }
 
 SPECIAL_COMMAND_PARAMS = {
