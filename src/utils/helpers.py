@@ -99,7 +99,7 @@ def check_date_string(date_string):
     elif date_string.lower() == "yesterday":
         return (now - datetime.timedelta(days=1)).date().strftime(date_format)
     else:
-        date = dateutil.parser.parse(date_string)
+        date = dateutil.parser.parse(date_string, yearfirst=True)
         return date.isoformat()
 
 def get_mods_enum(mods, diff=False):
