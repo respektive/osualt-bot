@@ -93,5 +93,6 @@ your user_id. username won't work.
 ```""",
     "getfile": """```ahk
 -type: List to fetch. neverbeenssed, neverbeenfced, neverbeendted, scores, scoresimple, beatmaps, beatmapsimple, fc_count, top_score, top_score_nomod, top_score_hidden, registered, nomodnumberones, hiddennumberones, numberones
+-u: specify a user
 ```""",
 }
