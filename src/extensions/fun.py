@@ -11,6 +11,13 @@ class Fun(commands.Cog):
         await ctx.reply('stinks')
 
     @commands.command()
+    async def kilgar(self, ctx):
+        """abababa"""
+        embed=discord.Embed(color=0xc85050)
+        embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/931703750983299072.webp?size=96&quality=lossless")
+        await ctx.reply(embed=embed)
+
+    @commands.command()
     async def abababa(self, ctx):
         """abababa"""
         embed=discord.Embed(color=0xc85050)
