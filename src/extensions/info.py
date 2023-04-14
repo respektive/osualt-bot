@@ -2,6 +2,25 @@ from discord.ext import commands
 import discord
 from utils.command_params import COMMAND_FLAGS, COG_FLAGS, SPECIAL_COMMAND_PARAMS, EXTRA_COMMAND_FLAGS
 
+FUN_PARAMS = ["me", "you", "abababa", "kilgar", "respektive"]
+
+def get_fun_embed(param):
+    embed = discord.Embed(colour=0xcc5288)
+    if param == "me":
+        embed.title = "You can't be helped."
+    elif param == "you":
+        embed.title = "who"
+    elif param == "abababa":
+        embed.color=0xc85050 
+        embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/653927651618193428.gif?size=96")
+    elif param == "kilgar":
+        embed.color=0xc85050 
+        embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/931703750983299072.webp?size=96&quality=lossless")
+    elif param == "respektive":
+        embed.color=0xc85050
+        embed.title = "罗纳德 respektive 麦当劳 clown 精神错乱 incident"
+
+    return embed
 
 class HelpView(discord.ui.View):
     def __init__(self, bot, user):
@@ -72,6 +91,15 @@ class Info(commands.Cog):
             embed.description = "Select a category to see the available commands or request help for a specific command using `!help command-name`."
             view = HelpView(self.bot, ctx.author)
             await ctx.reply(embed=embed, view=view)
+        elif command_name == "parameters":
+            embed = discord.Embed(title="All Parameters", colour=0xcc5288)
+            for flag in COMMAND_FLAGS:
+                embed.add_field(name=COMMAND_FLAGS[flag]["name"], value=COMMAND_FLAGS[flag]["value"], inline=False)
+
+            await ctx.reply(embed=embed)
+        elif command_name in FUN_PARAMS:
+            embed = get_fun_embed(command_name)
+            await ctx.reply(embed=embed)
         else:
             # Show the help for the specific command
             command = self.bot.get_command(command_name)

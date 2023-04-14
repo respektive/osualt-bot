@@ -53,8 +53,8 @@ ADVANCED_PARAMS = """```ahk
 COMMAND_FLAGS = {
     "global": { "name": "Global Parameters", "value": GLOBAL_PARAMS },
     "common": { "name": "Parameters", "value": COMMON_PARAMS },
-    "beatmap": { "name": "Beatmap Parameters", "value": BEATMAP_PARAMS },
     "advanced": { "name": "Optional Parameters", "value": ADVANCED_PARAMS },
+    "beatmap": { "name": "Beatmap Parameters", "value": BEATMAP_PARAMS },
 }
 
 COG_FLAGS = {
