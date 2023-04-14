@@ -379,8 +379,9 @@ def build_where_clause(di, table=None):
             where += " and scores.user_id = '" + str(di["-user"]) + "'"
         else:
             where += " and user_id = '" + str(di["-user"]) + "'"
-    if di.get("-country"):
-        where += " and LOWER(country_code) = '" + str(di["-country"]) + "'"
+    if di.get("-country") or di.get("-c"):
+        country_code = di.get("-country") or di.get("-c")
+        where += f" and LOWER(country_code) = '{country_code.lower()}'"
     if di.get("-rankedscore"):
         where += " and ranked_score >= " + str(di["-rankedscore"])
     if di.get("-rankedscore-max"):
