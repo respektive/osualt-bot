@@ -43,8 +43,10 @@ async def on_command_error(ctx, error):
 
     if isinstance(error, commands.MissingPermissions):
         error = "You don't have permission to use this command!"
-    else:
+    elif hasattr(error, 'original'):
         error = error.original
+    else:
+        error = error
 
     embed = discord.Embed(title = "Error", colour=discord.Colour(0xcc5288))
     embed.description = "```\n" + f'{error}' + "\n```"

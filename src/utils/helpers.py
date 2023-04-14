@@ -72,6 +72,15 @@ language_ids = {
 
 diff_mods = ["HR","EZ","DT","HT","FL","HD"]
 
+def escape_string(s):
+    """
+    Escapes special characters for use in SQL queries
+    """
+    special_chars = {"'": "''", '\\': '\\\\', '\"': ''}
+    for char, escaped in special_chars.items():
+        s = s.replace(char, escaped)
+    return s
+
 def write_to_blacklist(di):
         blacklist = []
         path = "./blacklist"
@@ -167,16 +176,23 @@ def get_args(arg=None):
     if arg != None:
         args = arg
     di = {}
-    for i in range(0,len(args)//2):
-        di.update({args[2*i].lower():args[2*i+1]})
-    di = dict((k.lower(), v.lower()) for k, v in di.items())
-
+    for i in range(0, len(args) - 1):
+        if args[i].startswith("-"):
+            key = args[i].lower()
+            value = args[i+1]
+            if key == "-u":
+                di[key] = escape_string(value)
+            elif " " in value:
+                raise ValueError("spaces are not allowed for argument " + key)
+            else:
+                di[key] = value.replace('_', '')
+    
     # replace underscores on numbers
     for key, value in di.items():
         if value.isdigit() or (value.replace('_', '').isdigit() and '.' not in value):
             # value is a number with underscores as thousand separators
             di[key] = value.replace('_', '')  # remove the underscores
-
+    
     return di
 
 def build_where_clause(di, table=None):
