@@ -505,6 +505,9 @@ async def get_completion(ctx, type, di):
     user_id = await get_user_id(ctx, di)
     username = await get_username(user_id)
 
+    if user_id is None:
+        raise ValueError("Please specify a user using '-u'.")
+
     if type == "ar":
         ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"]
         title = "AR Completion"
@@ -687,10 +690,13 @@ async def build_leaderboard(ctx, base, di, user=None):
         user = str(di["-u"]).replace("+", " ").lower()
     else:
         user_id = await get_user_id(ctx, di)
-        query = "SELECT username FROM users2 WHERE user_id = $1"
-        res = await db.execute_query(query, int(user_id))
-        if len(res) > 0:
-            user = str(res[0][0]).lower()
+        if user_id is None:
+            user = None
+        else:
+            query = "SELECT username FROM users2 WHERE user_id = $1"
+            res = await db.execute_query(query, int(user_id))
+            if len(res) > 0:
+                user = str(res[0][0]).lower()
 
     rank = "select username, stat, ROW_NUMBER() OVER(order by stat " + direction + ") as rank from (" + base + ") base"
     data = "select rank, username, stat from (" + rank + ") r order by rank"

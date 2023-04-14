@@ -13,7 +13,10 @@ class Advanced(commands.Cog):
         """Returns maps in the database for a user based on specific criteria."""
         kwargs = get_args(args)
         kwargs["discord_id"] = ctx.message.author.id
-        kwargs["-user"] = await get_user_id(ctx, kwargs)
+        user_id = await get_user_id(ctx, kwargs)
+        if user_id is None:
+            raise ValueError("Please specify a user using '-u'")
+        kwargs["-user"] = user_id
         if not kwargs.get("-registered"):
             kwargs["-registered"] = "false"
 
@@ -27,7 +30,10 @@ class Advanced(commands.Cog):
         """Returns an ordered list of plays based on how much score you're msising compared to the #1 play on the map."""
         kwargs = get_args(args)
         kwargs["discord_id"] = ctx.message.author.id
-        kwargs["-user"] = await get_user_id(ctx, kwargs)
+        user_id = await get_user_id(ctx, kwargs)
+        if user_id is None:
+            raise ValueError("Please specify a user using '-u'")
+        kwargs["-user"] = user_id
         if not kwargs.get("-registered"):
             kwargs["-registered"] = "false"
 
