@@ -36,6 +36,10 @@ class Advanced(commands.Cog):
         kwargs["-user"] = user_id
         if not kwargs.get("-registered"):
             kwargs["-registered"] = "false"
+        if not kwargs.get("-order"):
+            kwargs["-order"] = "missing_score"
+        if not (kwargs.get("-dir") or kwargs.get("-direction")):
+            kwargs["-direction"] = kwargs["-dir"] = "desc"
 
         if kwargs.get("-unplayed"):
             if kwargs.get("-o") and kwargs["-o"] == "nomodscore":
