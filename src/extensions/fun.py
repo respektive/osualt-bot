@@ -13,7 +13,7 @@ class Fun(commands.Cog):
     @commands.command()
     async def kilgar(self, ctx):
         """abababa"""
-        embed=discord.Embed(color=0xc85050)
+        embed=discord.Embed(color=0x3498db)
         embed.set_image(url="https://pek.li/xnmvtt.png")
         await ctx.reply(embed=embed)
 

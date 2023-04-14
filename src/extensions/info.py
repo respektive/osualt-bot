@@ -14,7 +14,7 @@ def get_fun_embed(param):
         embed.color=0xc85050 
         embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/653927651618193428.gif?size=96")
     elif param == "kilgar":
-        embed.color=0xc85050 
+        embed.color=0x3498db 
         embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/931703750983299072.webp?size=96&quality=lossless")
     elif param == "respektive":
         embed.color=0xc85050
