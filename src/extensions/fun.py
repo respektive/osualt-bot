@@ -14,7 +14,7 @@ class Fun(commands.Cog):
     async def kilgar(self, ctx):
         """abababa"""
         embed=discord.Embed(color=0xc85050)
-        embed.set_thumbnail(url="https://cdn.discordapp.com/emojis/931703750983299072.webp?size=96&quality=lossless")
+        embed.set_image(url="https://pek.li/xnmvtt.png")
         await ctx.reply(embed=embed)
 
     @commands.command()
