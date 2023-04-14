@@ -185,7 +185,7 @@ def get_args(arg=None):
             elif " " in value:
                 raise ValueError("spaces are not allowed for argument " + key)
             else:
-                di[key] = value.replace('_', '')
+                di[key] = value
     
     # replace underscores on numbers
     for key, value in di.items():
