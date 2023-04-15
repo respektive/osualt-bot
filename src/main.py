@@ -43,7 +43,7 @@ async def on_command_error(ctx, error):
 
     if isinstance(error, commands.MissingPermissions):
         error = "You don't have permission to use this command!"
-    elif hasattr(error, 'original'):
+    elif isinstance(error, ValueError):
         error = error.original
     else:
         error = error
