@@ -85,6 +85,7 @@ class Info(commands.Cog):
     @commands.command()
     async def help(self, ctx, command_name: str = None):
         """Command for seeing every command"""
+        command_name = command_name.lower() if command_name else None # ensure lowercase
         if command_name is None:
             # Show the category select dropdown
             embed = discord.Embed(title="Help", colour=0xcc5288)
