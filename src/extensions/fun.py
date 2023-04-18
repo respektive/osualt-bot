@@ -12,9 +12,16 @@ class Fun(commands.Cog):
 
     @commands.command()
     async def kilgar(self, ctx):
-        """abababa"""
+        """ostrich"""
         embed=discord.Embed(color=0x3498db)
         embed.set_image(url="https://pek.li/xnmvtt.png")
+        await ctx.reply(embed=embed)
+
+    @commands.command()
+    async def raglik(self, ctx):
+        """hcirtso"""
+        embed=discord.Embed(color=0x3498db)
+        embed.set_image(url="https://pek.li/z9xb4l.png")
         await ctx.reply(embed=embed)
 
     @commands.command()
