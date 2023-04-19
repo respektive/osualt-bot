@@ -506,7 +506,7 @@ async def get_completion(ctx, type, di):
     username = await get_username(user_id)
 
     if user_id is None:
-        raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user id instead.")
+        raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user_id instead.")
 
     if type == "ar":
         ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"]
