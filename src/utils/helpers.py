@@ -179,7 +179,7 @@ def get_args(arg=None):
     for i in range(0, len(args) - 1):
         if args[i].startswith("-"):
             key = args[i].lower()
-            value = args[i+1]
+            value = args[i+1].lower()
             if key == "-u":
                 di[key] = escape_string(value)
             elif " " in value:
