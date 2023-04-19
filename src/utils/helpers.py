@@ -472,6 +472,12 @@ def build_where_clause(di, table=None):
         where += " and (top_score.top_score / length) >= " + str(di["-scorepersecond"])
     if di.get("-scorepersecond-max"):
         where += " and (top_score.top_score / length) < " + str(di["-scorepersecond-max"])
+    if di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min"):
+        if di.get("-nomodscorepersecond-min"):
+            di["-nomodscorepersecond"] = di["-nomodscorepersecond-min"]
+        where += " and (top_score_nomod.top_score_nomod / length) >= " + str(di["-nomodscorepersecond"])
+    if di.get("-nomodscorepersecond-max"):
+        where += " and (top_score_nomod.top_score_nomod / length) < " + str(di["-nomodscorepersecond-max"])
     if di.get("-acc-max"):
         where += " and scores.accuracy < " + str(di["-acc-max"])
     if di.get("-acc-min"):

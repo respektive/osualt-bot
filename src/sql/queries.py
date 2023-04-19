@@ -106,7 +106,7 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
     if di.get("-score") or di.get("-score-min") or di.get("-score-max") or di.get("-topscore") or di.get("-topscore-min") or di.get("-topscore-max")  or di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max"):
         base = base + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
 
-    if di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max"):
+    if di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max") or di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max"):
         base = base + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
 
     if di.get("-o") and di["-o"] == "lazerscore":
@@ -212,7 +212,7 @@ async def check_beatmaps(ctx, di, tables=None, sets=False):
             query = query + " inner join " + table + " using (beatmap_id)"
     if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs") or di.get("-apacks"):
         query = query + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
-    if di.get("-o") and di["-o"] == "nomodscore":
+    if di.get("-o") and di["-o"] == "nomodscore" or di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max"):
         query = query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
     if di.get("-o") and di["-o"] == "score" or di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max"):
         query = query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
@@ -246,7 +246,7 @@ async def check_weighted_pp(ctx, operation, di, embedtitle=None):
     if di.get("-score") or di.get("-score-min") or di.get("-score-max") or di.get("-topscore") or di.get("-topscore-min") or di.get("-topscore-max")  or di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max"):
         base = base + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
 
-    if di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max"):
+    if di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max") or di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max"):
         base = base + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
 
     if not di.get("-loved"):
@@ -273,7 +273,7 @@ async def check_weighted_score(ctx, operation, di, embedtitle=None):
     if di.get("-score") or di.get("-score-min") or di.get("-score-max") or di.get("-topscore") or di.get("-topscore-min") or di.get("-topscore-max")  or di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max"):
         base = base + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
 
-    if di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max"):
+    if di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max") or di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max"):
         base = base + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
 
     if not di.get("-loved"):
