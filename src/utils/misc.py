@@ -80,7 +80,7 @@ async def generateosdb(ctx, di):
     if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs"):
         query = query + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
         count = count + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
-    if di.get("-o") and di["-o"] == "score" or di.get("-scorepersecond"):
+    if di.get("-o") and di["-o"] == "score" or di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max"):
         query = query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
         count = count + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
     elif di.get("-o") and di["-o"] == "nomodscore":
