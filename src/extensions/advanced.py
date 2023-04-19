@@ -15,7 +15,7 @@ class Advanced(commands.Cog):
         kwargs["discord_id"] = ctx.message.author.id
         user_id = await get_user_id(ctx, kwargs)
         if user_id is None:
-            raise ValueError("Please specify a user using '-u'")
+            raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user id instead.")
         kwargs["-user"] = user_id
         if not kwargs.get("-registered"):
             kwargs["-registered"] = "false"
@@ -32,7 +32,7 @@ class Advanced(commands.Cog):
         kwargs["discord_id"] = ctx.message.author.id
         user_id = await get_user_id(ctx, kwargs)
         if user_id is None:
-            raise ValueError("Please specify a user using '-u'")
+            raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user id instead.")
         kwargs["-user"] = user_id
         if not kwargs.get("-registered"):
             kwargs["-registered"] = "false"
