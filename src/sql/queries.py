@@ -507,29 +507,49 @@ async def get_completion(ctx, type, di):
 
     if user_id is None:
         raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user_id instead.")
+    
+    # Parse args
+    default_size = 1
+    length = max(int(di.get("-l", 10)), 1)
+    group_size = max(float(di.get("-g", default_size)), 0.1)
+    page = max(int(di.get("-p", 1)), 1)
+    di["-p"] = page
+    if not "-g" in di and not "-l" in di:
+        length += 1
+
+    def round_rng(rng):
+        rounded = round(rng, 2)
+        rounded = int(rounded) if ".0" in str(rounded) and not "-g" in di and not "-l" in di else rounded
+        return rounded
+
+    # Calculate ranges
+    ranges = []
+    start = (page - 1) * length * group_size
+    i = start
+    while len(ranges) < length:
+        ranges.append(f"{round_rng(i)}-{round_rng(i+group_size)}")
+        i += group_size
 
     if type == "ar":
-        ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"]
         title = "AR Completion"
         range_arg = "-ar-range"
         prefix = "AR "
     elif type == "od":
-        ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"]
         title = "OD Completion"
         range_arg = "-od-range"
         prefix = "OD "
     elif type == "cs":
-        ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10"]
         title = "CS Completion"
         range_arg = "-cs-range"
         prefix = "CS "
     elif type == "stars":
         if "-modded" in di:
             del di["-modded"]
-        ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10", "10-20"]
+        if not "-g" in di and not "-l" in di:
+            ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10", "10-20"]
         title = "Stars Completion"
         range_arg = "-range"
-        prefix = ""
+        prefix = "★"
     elif type == "length":
         if "-modded" in di:
             del di["-modded"]
@@ -575,12 +595,16 @@ async def get_completion(ctx, type, di):
             start_minutes = start // 60
             end_minutes = end // 60
             if start_minutes == 10:
-                rng = "10+"
+                rng = "10 min+"
             else:
-                rng = f"{start_minutes}-{end_minutes}"
+                rng = f"{start_minutes}-{end_minutes} min"
+        elif not type == "stars" and rng == "10-11":
+            rng = "10+"
+        elif type == "stars" and rng == "10-20":
+            rng = "10+"
 
         completion_percent = f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
-        description += f"{prefix}{'10+' if rng == '10-20' else rng} | {completion_percent}% | {scores_count}/{beatmap_count}\n"
+        description += f"{prefix}{rng} | {completion_percent}% | {scores_count}/{beatmap_count}\n"
     description += "```"
 
     embed = discord.Embed(title = f"{title} for {username or user_id}", colour=discord.Colour(0xcc5288))
