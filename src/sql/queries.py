@@ -549,7 +549,7 @@ async def get_completion(ctx, type, di):
             ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10", "10-20"]
         title = "Stars Completion"
         range_arg = "-range"
-        prefix = "★"
+        prefix = ""
     elif type == "length":
         if "-modded" in di:
             del di["-modded"]
@@ -600,8 +600,12 @@ async def get_completion(ctx, type, di):
                 rng = f"{start_minutes}-{end_minutes} min"
         elif not type == "stars" and rng == "10-11":
             rng = "10+"
-        elif type == "stars" and rng == "10-20":
-            rng = "10+"
+        elif type == "stars":
+            if rng == "10-20":
+                rng = "10★+"
+            else:
+                start, end = rng.split("-")
+                rng = f"{start}-{end}★"
 
         completion_percent = f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
         description += f"{prefix}{rng} | {completion_percent}% | {scores_count}/{beatmap_count}\n"
