@@ -48,9 +48,9 @@ class Advanced(commands.Cog):
                 await get_beatmap_list(ctx, kwargs, None, False, ("max(top_score) as missing_score"), True)
         else:
             if kwargs.get("-o") and kwargs["-o"] == "nomodscore":
-                await get_beatmap_list(ctx, kwargs, ["scores"], False, ("max(top_score_nomod) as missing_score"), True)
+                await get_beatmap_list(ctx, kwargs, ["scores"], False, ("max(top_score_nomod - score) as missing_score"), True)
             else:
-                await get_beatmap_list(ctx, kwargs, ["scores"], False, ("max(top_score) as missing_score"), True)
+                await get_beatmap_list(ctx, kwargs, ["scores"], False, ("max(top_score - score) as missing_score"), True)
 
     @commands.command(aliases=["q"])
     async def query(self, ctx, *args, kwargs=None, title=None):
