@@ -167,7 +167,7 @@ class Profile(commands.Cog):
     async def totalhits(self, ctx, *args):
         """Global Total Hits leaderboard"""
         kwargs = get_args(args)
-        await get_profile_leaderboard(ctx, "totalhits", "Total Hits", **kwargs)
+        await get_profile_leaderboard(ctx, "total_hits", "Total Hits", **kwargs)
 
     @commands.command()
     async def totalscore(self, ctx, *args):
