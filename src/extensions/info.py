@@ -136,5 +136,17 @@ class Info(commands.Cog):
 
             await ctx.reply(embed=embed)
     
+    @commands.command(aliases=["about", "github"])
+    async def info(self, ctx):
+        """Displays information about the bot"""
+        embed = discord.Embed(title=f"Info", description="The prefix for this bot is `!`. **Bot is standard only**.\nPermanent Server Invite: https://discord.gg/osualt", color=0xcc5288)
+
+        embed.add_field(name="Read #info", value=" Read <#792857827219079208> to get an idea on how the bot works and how to register.", inline=False)
+        embed.add_field(name="Commands", value="Request help for a specific command using `!help command-name` and help for filters can be requested using `!help parameters`.\nFor a full list of every command use `!help`.", inline=False)
+        embed.add_field(name="GitHub", value="The Discord portion of the bot is open-source and can be found on GitHub [here](https://github.com/respektive/osualt-bot).\nThe tracker is made by Ciuriya#0037 and can be found on GitHub [here](https://github.com/Ciuriya/osualt-play-tracker).\nThe backend that is fetching all the stats and scores is currently not open-source.", inline=False)
+        embed.add_field(name="Scores inspector", value="The scores inspector is made by Amayakase#9198 and has access to the bots database and generates statistics and graphs from it. It can be found [here](https://darkchii.nl/score/).", inline=False)
+
+        await ctx.send(embed=embed)
+
 async def setup(bot):
     await bot.add_cog(Info(bot))
