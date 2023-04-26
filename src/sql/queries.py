@@ -182,6 +182,8 @@ async def check_beatmaps(ctx, di, tables=None, sets=False):
 
     for key in di.copy().keys():
         if key in blacklist:
+            if (key == "-user" or key == "-u") and "-unplayed" in di:
+                continue
             del di[key]
     operation = "count(distinct beatmaps.beatmap_id)"
 
