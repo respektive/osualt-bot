@@ -81,24 +81,6 @@ def escape_string(s):
         s = s.replace(char, escaped)
     return s
 
-def write_to_blacklist(di):
-        blacklist = []
-        path = "./blacklist"
-
-        with open(path, "r") as f:
-            blacklist = json.load(f)
-
-        if di.get("-add"):
-            with open(path, "w") as f:
-                if "," in di["-add"]:
-                    to_add = di["-add"].split(",")
-                    blacklist = blacklist + to_add
-                else:
-                    blacklist.append(di["-add"])
-                json.dump(blacklist, f)
-
-        return blacklist
-
 def check_date_string(date_string):
     # current UTC date and time
     now = datetime.datetime.utcnow()

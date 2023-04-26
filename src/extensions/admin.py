@@ -1,5 +1,5 @@
 from discord.ext import commands
-from utils.helpers import get_args, write_to_blacklist
+from utils.helpers import get_args
 import sys
 import subprocess
 
@@ -8,15 +8,6 @@ RESTART_SCRIPT_PATH = "/home/osualt/start_bot.sh"
 class Admin(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-
-    @commands.command()
-    @commands.has_permissions(kick_members=True)  
-    async def blacklist(self, ctx, *args):
-        """Add an argument to the beatmaps table blacklist"""
-        di = get_args(args)
-        blacklist = write_to_blacklist(di)
-
-        await ctx.reply(blacklist)
 
     @commands.command()
     @commands.has_permissions(kick_members=True)  
