@@ -341,7 +341,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
     if not di.get("-loved"):
         di["-loved"] = "false"
 
-    if not di.get("-notscorestable") == "true":
+    if not di.get("-notscorestable") == "true" or "-unplayed" in di:
         user_id = await get_user_id(ctx, di)
         di["-user"] = user_id
         di["-u"] = user_id
