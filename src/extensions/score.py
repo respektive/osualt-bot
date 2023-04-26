@@ -134,5 +134,14 @@ class Score(commands.Cog):
         
         await ctx.invoke(self.bot.get_command("query"), kwargs=kwargs)
 
+    @commands.command()
+    async def agedscore(self, ctx, *args):
+        """Score multiplied by the years since ranked"""
+        kwargs = get_args(args)
+        kwargs["-o"] = "agedscore"
+        kwargs["-float"] = "false"
+        
+        await ctx.invoke(self.bot.get_command("query"), kwargs=kwargs)
+
 async def setup(bot):
     await bot.add_cog(Score(bot))

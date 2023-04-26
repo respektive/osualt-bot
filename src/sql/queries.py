@@ -123,7 +123,7 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
 
     options = ["completion", "%", "length_completion", "length", "score", "scoer", "lazerscore", "lazerscore_nomod", 
                 "lazerscore_standard", "lazerscore_standard_nomod", "lazerscore_doublesliders", "totalpp",
-                "pp", "weighed_pp", "100", "50", "miss", "x", "sets", "mapsets"]
+                "pp", "weighed_pp", "100", "50", "miss", "x", "sets", "mapsets", "agedscore"]
 
     if not di.get("-loved"):
         di["-loved"] = "false"
