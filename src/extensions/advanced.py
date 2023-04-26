@@ -101,7 +101,7 @@ class Advanced(commands.Cog):
                 await check_tables(ctx, f"SUM(POW((({standardised} / {max_score}) * {totalHitObjects}), 1.8) * mods.multiplier * 128)", "scores", kwargs, "Lazer Classic Score Testing")
 
             elif kwargs["-o"] == "agedscore":
-                await check_tables(ctx, "sum(score * floor((DATE_PART('year', NOW() - approved_date) + DATE_PART('day', NOW() - approved_date) / 365.2425)))", "scores", kwargs, "Aged Score")
+                await check_tables(ctx, "sum(score * (DATE_PART('year', NOW() - approved_date) + DATE_PART('day', NOW() - approved_date) / 365.2425))", "scores", kwargs, "Aged Score")
 
             elif kwargs["-o"] == "totalpp":
                 await check_tables(ctx, "sum(scores.pp)", "scores", kwargs, "Total pp")

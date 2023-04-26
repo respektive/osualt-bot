@@ -316,7 +316,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
         if di["-order"] == "agedscore":
             if not di.get("-direction") or di.get("-dir"):
                 di["-direction"] = "desc"
-            di["-order"] = "score * floor((DATE_PART('year', NOW() - approved_date) + DATE_PART('day', NOW() - approved_date) / 365.2425))"
+            di["-order"] = "score * (DATE_PART('year', NOW() - approved_date) + DATE_PART('day', NOW() - approved_date) / 365.2425)"
         if di["-order"] == "lazerscore":
             if not di.get("-direction") or di.get("-dir"):
                 di["-direction"] = "desc"
@@ -471,7 +471,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
                 formatBonusColumn = str(datetime.timedelta(seconds=int(b[6])))
             elif order == "enabled_mods":
                 formatBonusColumn = get_mods_string(b[6])
-            elif order == "score * floor((DATE_PART('year', NOW() - approved_date) + DATE_PART('day', NOW() - approved_date) / 365.2425))":
+            elif order == "score * (DATE_PART('year', NOW() - approved_date) + DATE_PART('day', NOW() - approved_date) / 365.2425)":
                 formatBonusColumn = "{:,.0f}".format(b[6])
             elif not str(b[6]).isnumeric():
                 formatBonusColumn = str(b[6])
