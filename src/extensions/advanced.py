@@ -175,7 +175,7 @@ class Advanced(commands.Cog):
                 await check_tables(ctx, kwargs["-o"], "scores", kwargs, title)
                 
         else:
-            await check_tables(ctx, "count( distinct scores.beatmap_id )", "scores", kwargs, title or "Clears")
+            await check_tables(ctx, "count( scores.beatmap_id )", "scores", kwargs, title or "Clears")
 
     @commands.command()
     async def tragedy(self, ctx, *args):
