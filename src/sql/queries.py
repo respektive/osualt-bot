@@ -1,5 +1,5 @@
 import datetime
-import json
+import time
 import math
 import discord
 from .db import Database
@@ -54,20 +54,26 @@ async def check_mappers(ctx, stat, di):
     return result
 
 async def get_mapper_leaderboard(ctx, stat, title, **kwargs):
+    query_start_time = time.time()
     rows = await check_mappers(ctx, stat, kwargs)
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
     embed = format_leaderboard(rows, kwargs)
 
     embed.title = title
-    embed.set_footer(text="Based on Profile Stats", icon_url="https://pek.li/maj7qa.png")
+    embed.set_footer(text=f"Based on Profile Stats • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 
 async def get_profile_leaderboard(ctx, stat, title, **kwargs):
+    query_start_time = time.time()
     rows = await check_profile(ctx, stat, kwargs)
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
     embed = format_leaderboard(rows, kwargs)
 
     embed.title = title
-    embed.set_footer(text="Based on Profile Stats", icon_url="https://pek.li/maj7qa.png")
+    embed.set_footer(text=f"Based on Profile Stats • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 
@@ -81,14 +87,17 @@ async def check_array_stats(ctx, operation, table, aggregate, di, title=None):
 
     query = await build_leaderboard(ctx, base, di)
     print(query)
+    query_start_time = time.time()
     rows = await db.execute_query(query)
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
 
     if title == None:
         title = "Result"
 
     embed = format_leaderboard(rows, di)
     embed.title = title
-    embed.set_footer(text="Based on Profile Stats", icon_url="https://pek.li/maj7qa.png")
+    embed.set_footer(text=f"Based on Profile Stats • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 
@@ -157,7 +166,10 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
     print("base: ", base)
     query = await build_leaderboard(ctx, base, di)
     print("query:", query)
+    query_start_time = time.time()
     rows = await db.execute_query(query)
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
 
     if embedtitle == None:
         embedtitle = "Result"
@@ -170,7 +182,7 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
-    embed.set_footer(text="Based on Scores in the database", icon_url="https://pek.li/maj7qa.png")
+    embed.set_footer(text=f"Based on Scores in the database • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 
@@ -266,11 +278,14 @@ async def check_weighted_pp(ctx, operation, di, embedtitle=None):
 
     print(query)
 
+    query_start_time = time.time()
     rows = await db.execute_query(query)
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
-    embed.set_footer(text="Based on Scores in the database", icon_url="https://pek.li/maj7qa.png")
+    embed.set_footer(text=f"Based on Scores in the database • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 
@@ -292,11 +307,14 @@ async def check_weighted_score(ctx, operation, di, embedtitle=None):
     query = await build_leaderboard(ctx, base, di)
 
     print(query)
+    query_start_time = time.time()
     rows = await db.execute_query(query)
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
-    embed.set_footer(text="Based on Scores in the database", icon_url="https://pek.li/maj7qa.png")
+    embed.set_footer(text=f"Based on Scores in the database • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 
@@ -590,7 +608,8 @@ async def get_completion(ctx, type, di):
         title = "Yearly Completion"
         range_arg = "-year"
         prefix = ""
-    
+
+    query_start_time = time.time()
     description = "```pascal\n"
     for rng in ranges:
         completion = 100
@@ -623,9 +642,12 @@ async def get_completion(ctx, type, di):
         completion_percent = f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
         description += f"{prefix}{rng} | {completion_percent}% | {scores_count}/{beatmap_count}\n"
     description += "```"
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
 
     embed = discord.Embed(title = f"{title} for {username or user_id}", colour=discord.Colour(0xcc5288))
     embed.description = description
+    embed.set_footer(text=f"Based on Scores in the database • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
     await ctx.reply(embed=embed)
 
 async def get_pack_completion(ctx, di):
@@ -651,6 +673,7 @@ async def get_pack_completion(ctx, di):
             packs_ranges.append(f"{i:03}")
         i += group_size
 
+    query_start_time = time.time()
     description = "```pascal\n"
     for packs in packs_ranges:
         completion = 100
@@ -674,9 +697,12 @@ async def get_pack_completion(ctx, di):
         completion_percent = f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
         description += f"{packs} | {completion_percent}% | {scores_count}/{beatmap_count}\n"
     description += "```"
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
 
     embed = discord.Embed(title = f"Pack Completion for {username or user_id}" , colour=discord.Colour(0xcc5288))
     embed.description = description
+    embed.set_footer(text=f"Based on Scores in the database • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
     await ctx.reply(embed=embed)
 
 async def get_username(user_id):
