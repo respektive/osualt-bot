@@ -154,9 +154,9 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
                 di["-float"] = "true"
     if di.get("-groupby"):
         base = base + di["-groupby"]
-
+    print("base: ", base)
     query = await build_leaderboard(ctx, base, di)
-    print(query)
+    print("query:", query)
     rows = await db.execute_query(query)
 
     if embedtitle == None:
@@ -739,12 +739,34 @@ async def build_leaderboard(ctx, base, di, user=None):
             if len(res) > 0:
                 user = str(res[0][0]).lower()
 
-    rank = "select username, stat, ROW_NUMBER() OVER(order by stat " + direction + ") as rank from (" + base + ") base"
-    data = "select rank, username, stat from (" + rank + ") r order by rank"
-
-    if user != None:
-        query = "select * from (" + data + ") data where rank <= " + str(int(limit) * int(page)) + " and rank > " +  str(offset) + " or LOWER(username) = '" + user + "'" + " limit " + str(int(limit) + 1)
+    rank = f"""
+        SELECT username, stat, ROW_NUMBER() OVER(ORDER BY stat {direction}) as rank
+        FROM ({base}) base
+    """
+    
+    if user is not None:
+        leaderboard_query = f"""
+            WITH leaderboard AS (
+                {rank}
+            )
+            SELECT rank, username, stat
+            FROM leaderboard
+            WHERE rank <= {int(limit) * int(page)}
+                AND rank > {offset}
+                OR LOWER(username) = '{user}'
+            ORDER BY rank
+            LIMIT {int(limit) + 1}
+        """
     else:
-        query = "select * from (" + data + ") data limit " + str(limit) + " offset " + str(offset)
-
-    return query
+        leaderboard_query = f"""
+            WITH leaderboard AS (
+                {rank}
+            )
+            SELECT rank, username, stat
+            FROM leaderboard
+            ORDER BY rank
+            LIMIT {limit}
+            OFFSET {offset}
+        """
+        
+    return leaderboard_query
