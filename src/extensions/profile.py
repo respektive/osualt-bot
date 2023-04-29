@@ -93,7 +93,7 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         await get_profile_leaderboard(ctx, "mapping_follower_count", "Mapping Followers", **kwargs)
 
-    @commands.command()
+    @commands.command(aliases=["pc"])
     async def playcount(self, ctx, *args):
         """Global Play Count leaderboard"""
         kwargs = get_args(args)
