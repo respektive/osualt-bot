@@ -581,6 +581,14 @@ async def get_completion(ctx, type, di):
         title = "Stars Completion"
         range_arg = "-range"
         prefix = ""
+    elif type == "combo":
+        if "-modded" in di:
+            del di["-modded"]
+        if not "-g" in di and not "-l" in di:
+            ranges = ["0-100", "100-200", "200-300", "300-400", "400-500", "500-600", "600-700", "700-800", "800-900", "900-1000", "1000-99999"]
+        title = "Combo Completion"
+        range_arg = "-maxcombo-range"
+        prefix = ""
     elif type == "length":
         if "-modded" in di:
             del di["-modded"]
@@ -638,6 +646,12 @@ async def get_completion(ctx, type, di):
             else:
                 start, end = rng.split("-")
                 rng = f"{start}-{end}★"
+        elif type == "combo":
+            if rng == "1000-99999":
+                rng = "1000x+"
+            else:
+                start, end = rng.split("-")
+                rng = f"{start}-{end}x"
 
         completion_percent = f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
         description += f"{prefix}{rng} | {completion_percent}% | {scores_count}/{beatmap_count}\n"
