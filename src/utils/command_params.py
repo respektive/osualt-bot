@@ -90,18 +90,34 @@ your user_id. username won't work.
     "pack_completion": """```ahk
 -g: grouping size
 -a: set to 2 for approved packs
+-o: score, nomodscore for score completion
 ```""",
     "ar_completion": """```ahk
 -g: grouping size
+-o: score, nomodscore for score completion
 ```""",
     "od_completion": """```ahk
 -g: grouping size
+-o: score, nomodscore for score completion
 ```""",
     "cs_completion": """```ahk
 -g: grouping size
+-o: score, nomodscore for score completion
 ```""",
     "stars_completion": """```ahk
 -g: grouping size
+-o: score, nomodscore for score completion
+```""",
+    "length_completion": """```ahk
+-g: grouping size
+-o: score, nomodscore for score completion
+```""",
+    "combo_completion": """```ahk
+-g: grouping size
+-o: score, nomodscore for score completion
+```""",
+    "yearly_completion": """```ahk
+-o: score, nomodscore for score completion
 ```""",
     "getfile": """```ahk
 -type: List to fetch. neverbeenssed, neverbeenfced, neverbeendted, scores, scoresimple, beatmaps, beatmapsimple, fc_count, top_score, top_score_nomod, top_score_hidden, registered, nomodnumberones, hiddennumberones, numberones

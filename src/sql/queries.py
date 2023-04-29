@@ -376,6 +376,9 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
     count_query = "select count(distinct beatmaps.beatmap_id)"
     if sets:
         count_query = "select count(distinct beatmaps.set_id)"
+    elif returnCount and (di.get("-o") == "score" or di.get("-o") == "nomodscore"):
+        count_query = "select sum(scores.score)"
+
     count_query = count_query + " from beatmaps"
     if tables != None:
         for table in tables:
@@ -550,7 +553,7 @@ async def get_completion(ctx, type, di):
 
     def round_rng(rng):
         rounded = round(rng, 2)
-        rounded = int(rounded) if ".0" in str(rounded) and not "-g" in di and not "-l" in di else rounded
+        rounded = int(rounded) if ".0" in str(rounded) and (not "-g" in di and not "-l" in di) or (type == "combo" or type == "length") else rounded
         return rounded
 
     # Calculate ranges
@@ -560,6 +563,7 @@ async def get_completion(ctx, type, di):
     while len(ranges) < length:
         ranges.append(f"{round_rng(i)}-{round_rng(i+group_size)}")
         i += group_size
+    print("RANGES:", ranges)
 
     if type == "ar":
         title = "AR Completion"
@@ -592,7 +596,8 @@ async def get_completion(ctx, type, di):
     elif type == "length":
         if "-modded" in di:
             del di["-modded"]
-        ranges = ["0-60", "60-120", "120-180", "180-240", "240-300", "300-360", "360-420", "420-480", "480-540", "540-600", "600-99999"]
+        if not "-g" in di and not "-l" in di:
+            ranges = ["0-60", "60-120", "120-180", "180-240", "240-300", "300-360", "360-420", "420-480", "480-540", "540-600", "600-99999"]
         title = "Length Completion"
         range_arg = "-length-range"
         prefix = ""
@@ -632,9 +637,9 @@ async def get_completion(ctx, type, di):
 
         if type == "length":
             start, end = map(int, rng.split("-"))
-            start_minutes = start // 60
-            end_minutes = end // 60
-            if start_minutes == 10:
+            start_minutes = start // 60 if not "-g" in di and not "-l" in di else round(start / 60, 2)
+            end_minutes = end // 60 if not "-g" in di and not "-l" in di else round(end / 60, 2)
+            if rng == "600-99999":
                 rng = "10 min+"
             else:
                 rng = f"{start_minutes}-{end_minutes} min"
@@ -654,6 +659,9 @@ async def get_completion(ctx, type, di):
                 rng = f"{start}-{end}x"
 
         completion_percent = f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
+        if di.get("-o") == "score" or di.get("-o") == "nomodscore":
+            scores_count = f"{scores_count:,}"
+            beatmap_count = f"{beatmap_count:,}"
         description += f"{prefix}{rng} | {completion_percent}% | {scores_count}/{beatmap_count}\n"
     description += "```"
     query_end_time = time.time()
@@ -709,6 +717,9 @@ async def get_pack_completion(ctx, di):
             completion = int(scores_count)/int(beatmap_count)*100
 
         completion_percent = f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
+        if di.get("-o") == "score" or di.get("-o") == "nomodscore":
+            scores_count = f"{scores_count:,}"
+            beatmap_count = f"{beatmap_count:,}"
         description += f"{packs} | {completion_percent}% | {scores_count}/{beatmap_count}\n"
     description += "```"
     query_end_time = time.time()
