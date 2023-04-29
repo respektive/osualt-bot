@@ -69,12 +69,16 @@ class Advanced(commands.Cog):
             if title == "Result":
                 title = escape_markdown(kwargs["-o"])
             if kwargs["-o"] == "completion" or kwargs["-o"] == "%":
-                beatmap_count = str(int(await check_beatmaps(ctx, kwargs.copy())))
+                kwargs_copy = kwargs.copy()
+                kwargs_copy["-notscorestable"] = "true"
+                beatmap_count = str(int(await check_beatmaps(ctx, kwargs_copy)))
                 await check_tables(ctx, "round((cast(count(*) * 100::float / " +  beatmap_count + " as numeric)), 3)", "scores", kwargs, "Completion")
                 
             elif kwargs["-o"] == "length_completion":
                 kwargs["-noformat"] = True
-                beatmap_length = str(int(await check_beatmaps(ctx, kwargs.copy())))
+                kwargs_copy = kwargs.copy()
+                kwargs_copy["-notscorestable"] = "true"
+                beatmap_length = str(int(await check_beatmaps(ctx, kwargs_copy)))
                 await check_tables(ctx, "round((cast(sum(beatmaps.length) * 100::float / " +  beatmap_length + " as numeric)), 3)", "scores", kwargs, "Length Completion")
                 
             elif kwargs["-o"] == "length":
