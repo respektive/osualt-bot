@@ -630,7 +630,7 @@ async def get_completion(ctx, type, di):
         if not type == "grade_breakdown":
             beatmap_count = await check_beatmaps(ctx, di.copy())
         di["-user"] = user_id
-        scores_count = await get_beatmap_list(ctx, di, ["scores", "fc_count", "ss_count"], False, None, False, True)
+        scores_count = await get_beatmap_list(ctx, di, ["scores", "fc_count", "ss_count"], False, None, False, True) or 0
         print(scores_count)
         if int(beatmap_count) > 0:
             completion = int(scores_count)/int(beatmap_count)*100
@@ -708,7 +708,7 @@ async def get_pack_completion(ctx, di):
             di["-packs"] = packs
         beatmap_count = await check_beatmaps(ctx, di.copy())
         di["-user"] = user_id
-        scores_count = await get_beatmap_list(ctx, di, ["scores", "fc_count", "ss_count"], False, None, False, True)
+        scores_count = await get_beatmap_list(ctx, di, ["scores", "fc_count", "ss_count"], False, None, False, True) or 0
         print(scores_count)
         di.pop("-packs", None)
         di.pop("-apacks", None)
