@@ -30,7 +30,7 @@ class Completion(commands.Cog):
         kwargs = get_args(args)
         await get_completion(ctx, "stars", kwargs)
 
-    @commands.command(aliases=["maxcombo_completion", "coc"])
+    @commands.command(aliases=["maxcombo_completion", "coc", "cock"])
     async def combo_completion(self, ctx, *args):
         """Combo completion board for a single user"""
         kwargs = get_args(args)
