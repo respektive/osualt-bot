@@ -697,7 +697,8 @@ def build_where_clause(di, table=None):
         range = str(di["-objects-range"]).split("-")
         where += " and (spinners + sliders + circles) >= " + range[0] + " and (spinners + sliders + circles) < " + range[1]
     if di.get("-tags"):
-        where += " and LOWER(source || ' ' || tags || ' ' || artist || ' ' || beatmaps.title || ' ' || creator || ' ' || diffname) like '" + str(di["-tags"]).lower() + "'"
+        tag = str(di["-tags"]).lower()
+        where += " AND (LOWER(source) LIKE '%" + tag + "%' OR LOWER(tags) LIKE '%" + tag + "%' OR LOWER(artist) LIKE '%" + tag + "%' OR LOWER(beatmaps.title) LIKE '%" + tag + "%' OR LOWER(creator) LIKE '%" + tag + "%' OR LOWER(diffname) LIKE '%" + tag + "%')"
     if di.get("-genre"):
         where += " and genre = " + str(di["-genre"])
     if di.get("-language"):
