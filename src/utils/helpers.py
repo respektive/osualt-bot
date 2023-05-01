@@ -380,11 +380,15 @@ def build_where_clause(di, table=None):
     if di.get("-country") or di.get("-c"):
         country_code = di.get("-country") or di.get("-c")
         where += f" and LOWER(country_code) = '{country_code.lower()}'"
-    if di.get("-rankedscore"):
+    if di.get("-rankedscore") or di.get("-rankedscore-min"):
+        if di.get("-rankedscore-min"):
+            di["-rankedscore"] = di["-rankedscore-min"]
         where += " and ranked_score >= " + str(di["-rankedscore"])
     if di.get("-rankedscore-max"):
         where += " and ranked_score < " + str(di["-rankedscore-max"])
-    if di.get("-totalscore"):
+    if di.get("-totalscore") or di.get("-totalscore-min"):
+        if di.get("-totalscore-min"):
+            di["-totalscore"] = di["-totalscore-min"]
         where += " and total_score >= " + str(di["-totalscore"])
     if di.get("-totalscore-max"):
         where += " and total_score < " + str(di["-totalscore-max"])
@@ -411,7 +415,9 @@ def build_where_clause(di, table=None):
         where += " and top_score >= " + str(di["-topscore"])
     if di.get("-topscore-max"):
         where += " and top_score < " + str(di["-topscore-max"])
-    if di.get("-topscorenomod"):
+    if di.get("-topscorenomod") or di.get("-topscorenomod-min"):
+        if di.get("-topscorenomod-min"):
+            di["-topscorenomod"] = di["-topscorenomod-min"]
         where += " and top_score_nomod >= " + str(di["-topscorenomod"])
     if di.get("-topscorenomod-max"):
         where += " and top_score_nomod < " + str(di["-topscorenomod-max"])

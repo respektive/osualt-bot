@@ -1,69 +1,86 @@
 GLOBAL_PARAMS = """```ahk
 -l: specify how many results to output. Beware the 4000 character limit
 -p: specify the resulting page to output
--u: specify a user (For a space in the username, use "+")  
+-u: specify a user (For a space in the username, use "+" or quotes)
+-direction: desc, asc
 ```"""
 
 BEATMAP_PARAMS = """```ahk
 -ar-min, -od-max, -cs-min, -length-max, etc: map parameters
--tags: queue a subset of maps with given tags
--title: queue a subset of maps with a given title
--mapper: queue a subset of maps with a given mapper name
--artist: queue a subset of maps with a given artist name
--diff: queue a subset of maps with a given difficulty name
+-maxcombo-min/max: min/max combo of the beatmap
+-min/max: min/max star rating
+-range: range of star rating
+-tags: specify tags
+-title: specify a title
+-mapper: specify a mapper name
+-artist: specify an artist name
+-diff: specify a difficulty name
+-genre: specficy a genre id
+-language: specify a language id
+-start: earliest rank date of maps to include
+-end: latest rank date of maps to include
+-year: specify a year
+-month: specify a month (1-12)
+-date: specify a date 
+-pack: specifiy a pack id
+-packs: specify a range of packs
+-apacks: specify a range of approved packs
+-approved: approved status (1 = ranked, 2 = approved, 4 = loved)
+-loved: true, to include loved maps
+-b: specify a beatmap id
+-b-min/max/range: min/max/range of beatmap ids
 ```"""
 
-COMMON_PARAMS = """```ahk
--clears-min: minimal number of clears to include (inclusive)
--clears-max: minimal number of clears to include (exclusive)
+PROFILE_PARAMS = """```ahk
+-playcount-min/max/range: min/max/range of playcount to include 
+-clears-min/max/range: min/max/range of clears to include
 -country: specify a country using the ISO 2 letter code
--direction: desc, asc
--playcount-min: minimal ranked score to include (inclusive)
--playcount-max: maximal ranked score to include (exclusive)
--profile-pp-min: minimal profile pp to include (inclusive)
--profile-pp-max: maximal profile pp to include (exclusive)
--rankedscore: minimal ranked score to include (inclusive)
--rankedscore-max: maximal ranked score to include (exclusive)
--totalscore-min: minimal ranked score to include (inclusive)
--totalscore-max: maximal ranked score to include (exclusive)
+-profile-pp-min/max: min/max profile pp to include
+-rankedscore-min/max: min/max ranked score to include
+-totalscore-min/max: min/max ranked score to include
+-joined-start/end: earliest/latest date joined to include
+-ss-min/max/range: min/max/range of SS ranks to include
+-s-min/max/range: min/max/range of S ranks to include
+-a-min/max/range: min/max/range of A ranks to include
 ```"""
 
 ADVANCED_PARAMS = """```ahk
--letter: X XH X% SH S S% A B C D 
+-letters: X XH S SH A B C D or comma separated list of letters
 -is_ss, -is_ht, -is_dt, etc. : true/false
 -is: hd, hdhrdt, etc. short for -is_mod true
 -isnot: hd, hdhrdt, etc. short for -is_mod false
 -mods: ht, nfso, dthrfl, hd, ezhtnfhdfl, etc.
+-modded: true, to use the modded star rating
+-score-min/max: min/max score amount
+-topscore-min/max: min/max #1 score amount
+-topscorenomod-min/max: min/max #1 nomod score amount
 -replay: true/false
 -order: score, length, approved_date, accuracy, ar, od etc.
--direction: desc, asc
--min/-max: min/max star rating of maps to include 
--acc-min/max: min/max acc to include 
--pp-min/max: min/max pp to include 
--playcount-min/max: min/max amount of playcount to include 
--played-start/end: earliest/latest date played maps to include
--start: earliest rank date of maps to include
--end: latest rank date of maps to include
--year: specify a year
--unplayed: true
+-acc-min/max/range: min/max/range acc to include
+-pp-min/max/range: min/max/range pp to include
+-combo-min/max/range: min/max/range combo to include
+-miss-min/max/range: min/max/range amount of misses to include
+-300-min/max/range: min/max/range amount of 300s to include
+-100-min/max/range: min/max/range amount of 100s to include
+-50-min/max/range: min/max/range amount of 50s to include
 -tragedy: 100, 50, x, miss
--score: minimum score to include
+-unplayed: true
 ```"""
 
 COMMAND_FLAGS = {
     "global": { "name": "Global Parameters", "value": GLOBAL_PARAMS },
-    "common": { "name": "Parameters", "value": COMMON_PARAMS },
-    "advanced": { "name": "Optional Parameters", "value": ADVANCED_PARAMS },
+    "profile": { "name": "Profile Parameters", "value": PROFILE_PARAMS },
+    "advanced": { "name": "Advanced Parameters", "value": ADVANCED_PARAMS },
     "beatmap": { "name": "Beatmap Parameters", "value": BEATMAP_PARAMS },
 }
 
 COG_FLAGS = {
-    "profile": ["global", "common"],
-    "performance": ["global", "common"],
-    "advanced": ["global", "advanced", "beatmap"],
+    "profile": ["global", "profile"],
+    "performance": ["global", "profile"],
+    "advanced": ["global", "profile", "advanced", "beatmap"],
     "beatmaps": ["global", "beatmap"],
-    "score": ["global", "advanced", "beatmap"],
-    "yearly": ["global", "advanced", "beatmap"],
+    "score": ["global", "profile", "advanced", "beatmap"],
+    "yearly": ["global", "profile", "advanced", "beatmap"],
     "completion": ["global", "advanced", "beatmap"],
 }
 

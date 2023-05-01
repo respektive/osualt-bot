@@ -78,6 +78,50 @@ class HelpView(discord.ui.View):
         await interaction.response.edit_message(embed=embed)
 
 
+class ParametersView(discord.ui.View):
+    def __init__(self, bot, user):
+        super().__init__()
+
+        self.bot = bot
+        self.user = user
+
+        # Dynamically create select menu options based on categories
+        select_options = [
+            discord.SelectOption(label=COMMAND_FLAGS[category]["name"], value=category.lower())
+            for category in COMMAND_FLAGS
+        ]
+
+        # Create a select menu with options for each category
+        self.category_select = discord.ui.Select(
+            placeholder="Select a category",
+            options=select_options
+        )
+
+        # Add the select menu to the view
+        self.add_item(self.category_select)
+
+        # Define an event listener for the select menu
+        self.category_select.callback = self.on_select
+
+    async def on_select(self, interaction: discord.Interaction):
+        # Check if the user who issued the command is the one who made the selection
+        if interaction.user.id != self.user.id:
+            return await interaction.response.send_message("You can't select this option.", ephemeral=True)
+
+        # Get the selected category
+        selected_category = interaction.data["values"][0]
+
+        # Get the corresponding parameters for the selected category
+        category_params = COMMAND_FLAGS[selected_category]["value"]
+
+        # Create an embed with the list of parameters
+        embed = discord.Embed(title=COMMAND_FLAGS[selected_category]['name'], colour=0xcc5288)
+        embed.description = category_params
+
+        # Update the message with the embed
+        await interaction.response.edit_message(embed=embed)
+
+
 class Info(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -93,11 +137,11 @@ class Info(commands.Cog):
             view = HelpView(self.bot, ctx.author)
             await ctx.reply(embed=embed, view=view)
         elif command_name == "parameters":
-            embed = discord.Embed(title="All Parameters", colour=0xcc5288)
-            for flag in COMMAND_FLAGS:
-                embed.add_field(name=COMMAND_FLAGS[flag]["name"], value=COMMAND_FLAGS[flag]["value"], inline=False)
-
-            await ctx.reply(embed=embed)
+            # Show the category select dropdown
+            embed = discord.Embed(title="Parameters", colour=0xcc5288)
+            embed.description = "Select a category to see the available parameters."
+            view = ParametersView(self.bot, ctx.author)
+            await ctx.reply(embed=embed, view=view)
         elif command_name in FUN_PARAMS:
             embed = get_fun_embed(command_name)
             await ctx.reply(embed=embed)
