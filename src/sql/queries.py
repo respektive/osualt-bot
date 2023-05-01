@@ -202,7 +202,7 @@ async def check_beatmaps(ctx, di, tables=None, sets=False):
             if (key == "-user" or key == "-u") and "-unplayed" in di:
                 continue
             del di[key]
-    operation = "count(distinct beatmaps.beatmap_id)"
+    operation = "count(beatmaps.beatmap_id)"
 
     if di.get("-o"):
         if di["-o"] == "length" or di["-o"] == "length_completion":
@@ -373,7 +373,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
         di["-user"] = user_id
         di["-u"] = user_id
 
-    count_query = "select count(distinct beatmaps.beatmap_id)"
+    count_query = "select count(beatmaps.beatmap_id)"
     if sets:
         count_query = "select count(distinct beatmaps.set_id)"
     elif returnCount and (di.get("-o") == "score" or di.get("-o") == "nomodscore"):
@@ -519,7 +519,7 @@ async def get_beatmap_ids(di, tables=None):
     if not di.get("-loved"):
         di["-loved"] = "false"
 
-    query = "select distinct beatmaps.beatmap_id from beatmaps"
+    query = "select beatmaps.beatmap_id from beatmaps"
     if tables != None:
         for table in tables:
             if table == "mods":
