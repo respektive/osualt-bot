@@ -468,7 +468,10 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
         total_missing_query = query
     query = query + " order by " + order + " " + direction + ", artist limit " + str(limit) + " offset " + str(offset)
     print("Query: " + query)
+    query_start_time = time.time()
     res = await db.execute_query(query)
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
 
     embed = discord.Embed(colour=discord.Colour(0xcc5288))
     total_missing_score = ""
@@ -509,7 +512,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
             total_missing_score = " | Total missing score: " + "{:,}".format(score_sum)
 
     embed.title = 'Amount: ' + str(count) + total_missing_score
-    embed.set_footer(text='Page ' + str(page) + ' of ' + str(math.ceil(int(count) / int(limit))), icon_url="https://pek.li/maj7qa.png")
+    embed.set_footer(text='Page ' + str(page) + ' of ' + str(math.ceil(int(count) / int(limit))) + f" • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 
