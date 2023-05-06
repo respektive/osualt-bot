@@ -203,6 +203,8 @@ async def check_beatmaps(ctx, di, tables=None, sets=False):
                 continue
             del di[key]
     operation = "count(beatmaps.beatmap_id)"
+    if "-modded" in di and di["-modded"] == "true":
+        operation = "count(distinct beatmaps.beatmap_id)"
 
     if di.get("-o"):
         if di["-o"] == "length" or di["-o"] == "length_completion":
