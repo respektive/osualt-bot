@@ -29,7 +29,7 @@ async def get_queue_length():
 async def check_profile(ctx, stat, di):
     
     #format the base level data
-    base = f"select username, {stat} as stat from users2"
+    base = f"select username, {stat} as stat from users2 inner join users_ppv1 using (user_id)"
     base = base + build_where_clause(di)
     
     #build and execute the leaderboard creating query
@@ -74,6 +74,18 @@ async def get_profile_leaderboard(ctx, stat, title, **kwargs):
 
     embed.title = title
     embed.set_footer(text=f"Based on Profile Stats • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
+
+    await ctx.reply(embed=embed)
+
+async def get_ppv1_leaderboard(ctx, stat, title, **kwargs):
+    query_start_time = time.time()
+    rows = await check_profile(ctx, stat, kwargs)
+    query_end_time = time.time()
+    query_execution_time = round(query_end_time - query_start_time, 2)
+    embed = format_leaderboard(rows, kwargs)
+
+    embed.title = title
+    embed.set_footer(text=f"Last updated 2023-05-06 • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 

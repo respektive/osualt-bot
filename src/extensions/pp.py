@@ -1,6 +1,6 @@
 from discord.ext import commands
 from utils.helpers import get_args
-from sql.queries import get_profile_leaderboard
+from sql.queries import get_profile_leaderboard, get_ppv1_leaderboard
 
 class Performance(commands.Cog):
     def __init__(self, bot):
@@ -46,6 +46,26 @@ class Performance(commands.Cog):
         kwargs["-o"] = "totalpp"
         
         await ctx.invoke(self.bot.get_command("query"), kwargs=kwargs)
+
+    @commands.command()
+    async def ppv1(self, ctx, *args):
+        """ppv1 leaderboard, not realtime"""
+        kwargs = get_args(args)
+        stat = "ppv1"
+        if "-o" in kwargs and (kwargs["-o"] == "acc" or kwargs["-o"] == "accuracy"):
+            kwargs["-percentage"] = "true"
+            stat = "accuracyv1"
+        
+        await get_ppv1_leaderboard(ctx, stat, "ppv1", **kwargs)
+
+    @commands.command()
+    async def accv1(self, ctx, *args):
+        """Profile acc if ppv1"""
+        kwargs = get_args(args)
+        kwargs["-float"] = "true"
+        kwargs["-percentage"] = "true"
+
+        await get_ppv1_leaderboard(ctx, "accuracyv1", "ppv1", **kwargs)
 
 async def setup(bot):
     await bot.add_cog(Performance(bot))
