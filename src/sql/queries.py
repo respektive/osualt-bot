@@ -398,12 +398,12 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
     if tables == None:
         if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")):
             count_query = count_query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
-        elif (di.get("-o") and di["-o"] == "score") or (di.get("-topscore") or di.get("-topscore-max")):
+        else:
             count_query = count_query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
     elif not ('top_score' in tables or 'top_score_nomod' in tables):
         if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")):
             count_query = count_query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
-        elif (di.get("-o") and di["-o"] == "score") or (di.get("-topscore") or di.get("-topscore-max")):
+        else:
             count_query = count_query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
     
     if di.get("-rank"):
@@ -446,12 +446,12 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
     if tables == None:
         if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")):
             query = query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
-        elif (di.get("-o") and di["-o"] == "score") or (di.get("-topscore") or di.get("-topscore-max")):
+        else:
             query = query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
     elif not ('top_score' in tables or 'top_score_nomod' in tables):
         if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")):
             query = query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
-        elif (di.get("-o") and di["-o"] == "score") or (di.get("-topscore") or di.get("-topscore-max")):
+        else:
             query = query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
     if di.get("-rank"):
         query = query + " inner join (select beatmap_id, user_id from top_score) firsts on beatmaps.beatmap_id = firsts.beatmap_id"
