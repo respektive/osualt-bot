@@ -261,9 +261,9 @@ async def updatelists(client):
 
             if(differential >= 7):
                 rows = await db.execute_query("select username, pp, global_rank from users2 where user_id = " + str(user))
-                result = rows[0]
                 username = user
-                if result is not None:
+                if len(rows) > 0:
+                    result = rows[0]
                     username = result[0]
                     pp = result[1]
                     rank = result[2]
@@ -316,9 +316,9 @@ CS **{b[8]:.1f}** • AR **{b[9]:.1f}** • OD **{b[10]:.1f}** • HP **{b[11]:.
 
             if(differential >= 30):
                 rows = await db.execute_query("select username, pp, global_rank from users2 where user_id = " + str(user))
-                result = rows[0]
                 username = user
-                if result is not None:
+                if len(rows) > 0:
+                    result = rows[0]
                     username = result[0]
                     pp = result[1]
                     rank = result[2]
@@ -371,9 +371,9 @@ CS **{b[8]:.1f}** • AR **{b[9]:.1f}** • OD **{b[10]:.1f}** • HP **{b[11]:.
 
             if(differential >= 7):
                 rows = await db.execute_query("select username, pp, global_rank from users2 where user_id = " + str(user))
-                result = rows[0]
                 username = user
-                if result is not None:
+                if len(rows) > 0:
+                    result = rows[0]
                     username = result[0]
                     pp = result[1]
                     rank = result[2]
