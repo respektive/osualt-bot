@@ -65,7 +65,7 @@ class Performance(commands.Cog):
         kwargs["-float"] = "true"
         kwargs["-percentage"] = "true"
 
-        await get_ppv1_leaderboard(ctx, "accuracyv1", "ppv1", **kwargs)
+        await get_ppv1_leaderboard(ctx, "accuracyv1", "ppv1 Accuracy", **kwargs)
 
 async def setup(bot):
     await bot.add_cog(Performance(bot))
