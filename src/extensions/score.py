@@ -117,6 +117,15 @@ class Score(commands.Cog):
         await ctx.invoke(self.bot.get_command("query"), kwargs=kwargs, title="Top Score")
 
     @commands.command()
+    async def lovedscore(self, ctx, *args):
+        """Score only on loved maps"""
+        kwargs = get_args(args)
+        kwargs["-o"] = "score"
+        kwargs["-a"] = "4"
+        
+        await ctx.invoke(self.bot.get_command("query"), kwargs=kwargs)
+
+    @commands.command()
     async def ssscore(self, ctx, *args):
         """Score only on maps a player has SSed"""
         kwargs = get_args(args)
