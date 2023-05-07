@@ -144,7 +144,7 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
 
     options = ["completion", "%", "length_completion", "length", "score", "scoer", "lazerscore", "lazerscore_nomod", 
                 "lazerscore_standard", "lazerscore_standard_nomod", "lazerscore_doublesliders", "totalpp",
-                "pp", "weighed_pp", "100", "50", "miss", "x", "sets", "mapsets", "agedscore"]
+                "pp", "weighed_pp", "100", "50", "miss", "x", "sets", "mapsets", "agedscore", "scorev0"]
 
     if not di.get("-loved"):
         di["-loved"] = "false"
@@ -175,6 +175,10 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
                 di["-float"] = "true"
     if di.get("-groupby"):
         base = base + di["-groupby"]
+
+    if di.get("-o") and di["-o"] == "scorev0":
+        base = f"SELECT username, SUM(stat) as stat FROM ({base} ,beatmaps.set_id) best_scores GROUP BY best_scores.username"
+
     print("base: ", base)
     query = await build_leaderboard(ctx, base, di)
     print("query:", query)

@@ -152,5 +152,14 @@ class Score(commands.Cog):
         
         await ctx.invoke(self.bot.get_command("query"), kwargs=kwargs)
 
+    @commands.command()
+    async def scorev0(self, ctx, *args):
+        """Score but taken only the the top score of a mapset"""
+        kwargs = get_args(args)
+        kwargs["-o"] = "scorev0"
+        kwargs["-float"] = "false"
+        
+        await ctx.invoke(self.bot.get_command("query"), kwargs=kwargs)
+
 async def setup(bot):
     await bot.add_cog(Score(bot))

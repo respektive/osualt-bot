@@ -86,6 +86,9 @@ class Advanced(commands.Cog):
                 
             elif kwargs["-o"] == "score" or kwargs["-o"] == "scoer":
                 await check_tables(ctx, "sum(scores.score)", "scores", kwargs, kwargs["-o"].upper())
+
+            elif kwargs["-o"] == "scorev0":
+                await check_tables(ctx, "MAX(scores.score)", "scores", kwargs, "Scorev0")
                 
             elif kwargs["-o"] == "lazerscore":
                 await check_tables(ctx, f"SUM((POW((({standardised} / {max_score}) * {totalHitObjects}), 2) * 36)::int)", "scores", kwargs, "Lazer Classic Score")
