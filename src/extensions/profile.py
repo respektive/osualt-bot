@@ -93,6 +93,13 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         await get_profile_leaderboard(ctx, "mapping_follower_count", "Mapping Followers", **kwargs)
 
+    @commands.command(aliases=["passrate"])
+    async def passratio(self, ctx, *args):
+        """Pass Ratio leaderboard"""
+        kwargs = get_args(args)
+        kwargs["-float"] = "true"
+        await get_profile_leaderboard(ctx, "greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1) / playcount::float", "Pass Ratio", **kwargs)
+
     @commands.command(aliases=["pc"])
     async def playcount(self, ctx, *args):
         """Global Play Count leaderboard"""
