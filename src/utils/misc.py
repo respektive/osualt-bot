@@ -38,20 +38,26 @@ async def generateosdb(ctx, di):
         di["-loved"] = "false"
 
     user_id = await get_user_id(ctx, di)
-    if user_id is None:
-        raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user_id instead.")
+    # if user_id is None:
+    #     raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user_id instead.")
 
     if di.get("-unplayed"):
         if not di.get("-o"):
             di["-o"] = "score"
-        di["-user"] = user_id
+        if user_id:
+            di["-user"] = user_id
+        else:
+            raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user_id instead.")
 
     if not di.get("-u"):
         if not di.get("-o"):
             di["-o"] = "score"
 
     if di.get("-u") or di.get("-missingscore"):
-        di["-user"] = user_id
+        if user_id:
+            di["-user"] = user_id
+        else:
+            raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user_id instead.")
 
     query = "select beatmaps.beatmap_id, set_id, artist, title, diffname, file_md5, mode, stars from beatmaps"
     count = "select count(*) from beatmaps"
@@ -82,10 +88,10 @@ async def generateosdb(ctx, di):
     if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs"):
         query = query + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
         count = count + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
-    if di.get("-o") and di["-o"] == "score" or (di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max") or di.get("-missingscore")):
+    if di.get("-o") and di["-o"] == "score" or (di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max")):
         query = query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
         count = count + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
-    elif di.get("-o") and di["-o"] == "nomodscore" or di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max"):
+    elif di.get("-o") and di["-o"] == "nomodscore" or (di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max")):
         query = query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
         count = count + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
 
