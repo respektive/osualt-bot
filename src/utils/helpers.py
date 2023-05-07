@@ -469,6 +469,30 @@ def build_where_clause(di, table=None):
         where += " and (top_score_nomod.top_score_nomod / length) >= " + str(di["-nomodscorepersecond"])
     if di.get("-nomodscorepersecond-max"):
         where += " and (top_score_nomod.top_score_nomod / length) < " + str(di["-nomodscorepersecond-max"])
+    if di.get("-missingscorepersecond") or di.get("-missingscorepersecond-min"):
+        if di.get("-missingscorepersecond-min"):
+            di["-missingscorepersecond"] = di["-missingscorepersecond-min"]
+        if di.get("-unplayed"):
+            if di.get("-o") and di["-o"] == "nomodscore":
+                where += " and (top_score_nomod / length) >= " + str(di["-missingscorepersecond"])
+            else:
+                where += " and (top_score / length) >= " + str(di["-missingscorepersecond"])
+        else:
+            if di.get("-o") and di["-o"] == "nomodscore":
+                where += " and ((top_score_nomod - score) / length) >= " + str(di["-missingscorepersecond"])
+            else:
+                where += " and ((top_score - score) / length) >= " + str(di["-missingscorepersecond"])
+    if di.get("-missingscorepersecond-max"):
+        if di.get("-unplayed"):
+            if di.get("-o") and di["-o"] == "nomodscore":
+                where += " and (top_score_nomod / length) >= " + str(di["-missingscorepersecond-max"])
+            else:
+                where += " and (top_score / length) >= " + str(di["-missingscorepersecond-max"])
+        else:
+            if di.get("-o") and di["-o"] == "nomodscore":
+                where += " and ((top_score_nomod - score) / length) >= " + str(di["-missingscorepersecond-max"])
+            else:
+                where += " and ((top_score - score) / length) >= " + str(di["-missingscorepersecond-max"])
     if di.get("-acc-max"):
         where += " and scores.accuracy < " + str(di["-acc-max"])
     if di.get("-acc-min"):
