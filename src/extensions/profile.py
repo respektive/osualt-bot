@@ -128,7 +128,7 @@ class Profile(commands.Cog):
             kwargs["-rankedscore"] = 100_000_000
         await get_profile_leaderboard(ctx, "cast(ranked_score / greatest((total_hits), 1) as int)", "Ranked Score per Hit", **kwargs)
 
-    @commands.command()
+    @commands.command(aliases=["scoreperplay"])
     async def rankedscoreperplay(self, ctx, *args):
         """Ranked Score per Play leaderboard"""
         kwargs = get_args(args)
