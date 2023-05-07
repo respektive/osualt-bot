@@ -97,8 +97,8 @@ class Profile(commands.Cog):
     async def passratio(self, ctx, *args):
         """Pass Ratio leaderboard"""
         kwargs = get_args(args)
-        kwargs["-float"] = "true"
-        await get_profile_leaderboard(ctx, "greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1) / playcount::float", "Pass Ratio", **kwargs)
+        kwargs["-o"] = "completion"
+        await get_profile_leaderboard(ctx, "round(cast(greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1)::float / playcount::float * 100 as numeric), 3)", "Pass Ratio", **kwargs)
 
     @commands.command(aliases=["pc"])
     async def playcount(self, ctx, *args):
