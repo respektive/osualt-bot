@@ -110,16 +110,22 @@ class Advanced(commands.Cog):
             elif kwargs["-o"] == "totalpp":
                 await check_tables(ctx, "sum(scores.pp)", "scores", kwargs, "Total pp")
                 
-            elif kwargs["-o"] == "pp" or kwargs["-o"] == "weighed_pp":
+            elif kwargs["-o"] == "pp" or kwargs["-o"] == "weighed_pp" or kwargs["-o"] == "ppv1":
                 if kwargs.get("-registered"):
                     if kwargs["-registered"] == "false" and not kwargs.get("-user"):
                         await ctx.reply("NO")
                         return
                 if not kwargs.get("-weight"):
-                    kwargs["-weight"] = "0.95"
+                    if kwargs["-o"] == "ppv1":
+                        kwargs["-weight"] = "0.994"
+                    else:
+                        kwargs["-weight"] = "0.95"
                 if float(kwargs["-weight"]) > 1 or float(kwargs["-weight"]) < 0:
                     await ctx.reply("NO")
-                await check_weighted_pp(ctx, "(weighted_pp(pp_index, a.pp, " + str(kwargs["-weight"]) + ") + bonus_pp(count(pp_index)))", kwargs, "Weighted pp")
+                if kwargs["-o"] == "ppv1":
+                    await check_weighted_pp(ctx, f"(weighted_ppv1(array_agg(a.pp ORDER BY a.pp DESC), {kwargs['-weight']}))", kwargs, "Weighted pp")
+                else:
+                    await check_weighted_pp(ctx, "(weighted_pp(pp_index, a.pp, " + str(kwargs["-weight"]) + ") + bonus_pp(count(pp_index)))", kwargs, "Weighted pp")
                 
             elif kwargs["-o"] == "xexxar-old":
                 if kwargs.get("-registered"):

@@ -273,6 +273,9 @@ async def check_beatmaps(ctx, di, tables=None, sets=False):
 async def check_weighted_pp(ctx, operation, di, embedtitle=None):
     table = "select scores.user_id, scores.beatmap_id, scores.pp, scores.accuracy, ROW_NUMBER() OVER(partition by scores.user_id order by scores.pp desc) as pp_index from scores inner join users2 on scores.user_id = users2.user_id inner join beatmaps on scores.beatmap_id = beatmaps.beatmap_id"
     
+    if di.get("-o") and di["-o"] == "ppv1":
+        table = "select scores_top.user_id, scores_top.beatmap_id, scores_top.pp, scores_top.accuracy, ROW_NUMBER() OVER(partition by scores_top.user_id order by scores_top.pp desc) as pp_index from scores_top inner join users2 on scores_top.user_id = users2.user_id inner join beatmaps on scores_top.beatmap_id = beatmaps.beatmap_id"
+
     if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs") or di.get("-apacks"):
         table = table + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
 

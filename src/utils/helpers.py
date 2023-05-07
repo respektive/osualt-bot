@@ -185,7 +185,10 @@ def build_where_clause(di, table=None):
     if di.get("-error"):
         where += " and this_will_error = " + str(di["-error"])
     if di.get("-registered") and str(di["-registered"]) == "true":
-        where += " and scores.user_id in (select user_id from priorityuser)"
+        if di.get("-o") and di["-o"] == "ppv1":
+            where += " and scores_top.user_id in (select user_id from priorityuser)"
+        else:
+            where += " and scores.user_id in (select user_id from priorityuser)"
     if di.get("-min"):
         if di.get("-modded") and di["-modded"] == "true":
             where += " and ROUND(moddedsr.star_rating::numeric, 2) >= " + str(di["-min"])
@@ -754,6 +757,8 @@ def build_where_clause(di, table=None):
     if di.get("-o"):
         if str(di["-o"]).lower() == "pp":
             where += " and scores.pp != 'NaN'"
+        if str(di["-o"]).lower() == "ppv1":
+            where += " and scores_top.pp != 'NaN'"
         if di["-o"] == "nomodnumberones":
             where += " and beatmaps.beatmap_id in (select beatmap_id from top_score_nomod where user_id = " + str(di["-user"]) + ")"
         if di["-o"] == "hiddennumberones":
