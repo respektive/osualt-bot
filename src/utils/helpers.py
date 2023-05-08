@@ -794,7 +794,7 @@ def build_where_clause(di, table=None):
         if str(di["-o"]).lower() == "pp":
             where += " and scores.pp != 'NaN'"
         if str(di["-o"]).lower() == "ppv1":
-            where += " and scores_top.pp != 'NaN'"
+            where += " and scores_top.pp > 0.001"
         if di["-o"] == "nomodnumberones":
             where += " and beatmaps.beatmap_id in (select beatmap_id from top_score_nomod where user_id = " + str(di["-user"]) + ")"
         if di["-o"] == "hiddennumberones":
