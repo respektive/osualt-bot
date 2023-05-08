@@ -275,10 +275,16 @@ def build_where_clause(di, table=None):
     if di.get("-date"):
             where += " and beatmaps.approved_date >= '" + check_date_string(str(di["-date"])) + " 00:00:00' and beatmaps.approved_date <= '" + check_date_string(str(di["-date"])) + " 23:59:59'"
     if di.get("-is_fc"):
-        if str(di["-is_fc"]).lower() == "true":
-            where += " and (countmiss = 0 and (maxcombo - combo) <= scores.count100 or rank like '%X%')"
-        if str(di["-is_fc"]).lower() == "false":
-            where += " and (countmiss > 0 or (maxcombo - combo) > scores.count100) and rank not like '%X%'"
+        if di.get("-o") and di["-o"] == "ppv1":
+            if str(di["-is_fc"]).lower() == "true":
+                where += " and (countmiss = 0 and (maxcombo - combo) <= scores_top.count100 or rank like '%X%')"
+            if str(di["-is_fc"]).lower() == "false":
+                where += " and (countmiss > 0 or (maxcombo - combo) > scores_top.count100) and rank not like '%X%'"
+        else:
+            if str(di["-is_fc"]).lower() == "true":
+                where += " and (countmiss = 0 and (maxcombo - combo) <= scores.count100 or rank like '%X%')"
+            if str(di["-is_fc"]).lower() == "false":
+                where += " and (countmiss > 0 or (maxcombo - combo) > scores.count100) and rank not like '%X%'"
     if di.get("-is_ss"):
         if str(di["-is_ss"]).lower() == "true":
             where += " and rank like '%X%'"
@@ -327,7 +333,10 @@ def build_where_clause(di, table=None):
             if mod == "ss":
                 where += " and rank like '%X%'"
             elif mod == "fc":
-                where += " and (countmiss = 0 and (maxcombo - combo) <= scores.count100 or rank like '%X%')"
+                if di.get("-o") and di["-o"] == "ppv1":
+                    where += " and (countmiss = 0 and (maxcombo - combo) <= scores_top.count100 or rank like '%X%')"
+                else:
+                    where += " and (countmiss = 0 and (maxcombo - combo) <= scores.count100 or rank like '%X%')"
             elif mod == "nm":
                 where += " and is_hd = false and is_hr = false and is_dt = false and is_fl = false and is_ez = false and is_ht = false"
             elif mod == "fm":
@@ -342,7 +351,10 @@ def build_where_clause(di, table=None):
             if mod == "ss":
                 where += " and rank not like '%X%'"
             elif mod == "fc":
-                where += " and (countmiss > 0 or (maxcombo - combo) > scores.count100) and rank not like '%X%'"
+                if di.get("-o") and di["-o"] == "ppv1":
+                    where += " and (countmiss > 0 or (maxcombo - combo) > scores_top.count100) and rank not like '%X%'"
+                else:
+                    where += " and (countmiss > 0 or (maxcombo - combo) > scores.count100) and rank not like '%X%'"
             elif mod == "nm":
                 where += " and enabled_mods not in ('0', '1', '4096', '32', '16416', '4097', '4128', '20512')"
             elif mod == "fm":
