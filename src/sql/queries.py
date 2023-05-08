@@ -439,15 +439,15 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
     if returnCount == True:
         return count
 
-    query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, round(stars, 3) as stars"
+    query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, round(stars, 2) as star_rating"
 
     if di.get("-modded") and di["-modded"] == "true":
-        query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, round(moddedsr.star_rating::numeric, 2) as stars"
+        query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, round(moddedsr.star_rating::numeric, 2) as star_rating"
 
     if bonusColumn != None:
         query = query + ", " + bonusColumn
     if sets:
-        query = "select set_id, max(beatmaps.beatmap_id) as beatmap_id, max(beatmaps.artist) as artist, max(beatmaps.title) as title, max(beatmaps.diffname) as diffname, round(max(beatmaps.stars), 2) as stars"
+        query = "select set_id, max(beatmaps.beatmap_id) as beatmap_id, max(beatmaps.artist) as artist, max(beatmaps.title) as title, max(beatmaps.diffname) as diffname, round(max(beatmaps.stars), 2) as star_rating"
         if bonusColumn != None:
             query = query + ", max(" + bonusColumn + ") as bonuscolumn"
     query = query + " from beatmaps"
@@ -485,7 +485,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
     if sets:
         query = query + " group by set_id"
     if missingScore:
-        query = query + " group by set_id, beatmaps.beatmap_id, artist, title, diffname, stars"
+        query = query + " group by set_id, beatmaps.beatmap_id, artist, title, diffname, star_rating"
         total_missing_query = query
     query = query + " order by " + order + " " + direction + ", artist limit " + str(limit) + " offset " + str(offset)
     print("Query: " + query)
