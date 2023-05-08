@@ -193,18 +193,18 @@ def build_where_clause(di, table=None):
         if di.get("-modded") and di["-modded"] == "true":
             where += " and ROUND(moddedsr.star_rating::numeric, 2) >= " + str(di["-min"])
         else:
-            where += " and ROUND(stars, 2) >= " + str(di["-min"])
+            where += " and stars >= " + str(di["-min"])
     if di.get("-max"):
         if di.get("-modded") and di["-modded"] == "true":
             where += " and ROUND(moddedsr.star_rating::numeric, 2) < " + str(di["-max"])
         else:
-            where += " and ROUND(stars, 2) < " + str(di["-max"])
+            where += " and stars < " + str(di["-max"])
     if di.get("-range"):
         range = str(di["-range"]).split("-")
         if di.get("-modded") and di["-modded"] == "true":
             where += " and ROUND(moddedsr.star_rating::numeric, 2) >= " + range[0] + " and ROUND(moddedsr.star_rating::numeric, 2) < " + range[1]
         else:
-            where += " and ROUND(stars, 2) >= " + range[0] + " and ROUND(stars, 2) < " + range[1]
+            where += " and stars >= " + range[0] + " and stars < " + range[1]
     if di.get("-time"):
         where += " and days >= " + str(di["-time"])
     if di.get("-month") and not (di.get("-year") or di.get("-y")):
