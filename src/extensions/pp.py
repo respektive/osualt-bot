@@ -51,6 +51,7 @@ class Performance(commands.Cog):
     async def ppv1(self, ctx, *args):
         """ppv1 leaderboard, not realtime"""
         kwargs = get_args(args)
+        kwargs["-float"] = "true"
         stat = "ppv1"
         if "-o" in kwargs and (kwargs["-o"] == "acc" or kwargs["-o"] == "accuracy"):
             kwargs["-percentage"] = "true"

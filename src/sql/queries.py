@@ -85,7 +85,7 @@ async def get_ppv1_leaderboard(ctx, stat, title, **kwargs):
     embed = format_leaderboard(rows, kwargs)
 
     embed.title = title
-    embed.set_footer(text=f"Last updated 2023-05-06 • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
+    embed.set_footer(text=f"Updated every ~30min • took {query_execution_time}s", icon_url="https://pek.li/maj7qa.png")
 
     await ctx.reply(embed=embed)
 
