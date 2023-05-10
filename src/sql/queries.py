@@ -652,7 +652,7 @@ async def get_completion(ctx, type, di):
     elif type == "monthly":
         if not "-year" or "-y" in di:
             di["-year"] = datetime.datetime.now().year
-        ranges = range(1,12)
+        ranges = range(1,13)
         title = "Monthly Completion"
         range_arg = "-month"
         prefix = ""
