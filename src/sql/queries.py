@@ -284,10 +284,13 @@ async def check_weighted_pp(ctx, operation, di, embedtitle=None):
         table = table + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
 
     if di.get("-score") or di.get("-score-min") or di.get("-score-max") or di.get("-topscore") or di.get("-topscore-min") or di.get("-topscore-max")  or di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max"):
-        base = base + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
+        table = table + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
 
     if di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max") or di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max"):
-        base = base + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
+        table = table + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
+
+    if di.get("-modded") and di["-modded"] == "true":
+        table = table + " inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id"
 
     if not di.get("-loved"):
         di["-loved"] = "false"
