@@ -1,3 +1,4 @@
+import calendar
 import datetime
 import time
 import math
@@ -648,6 +649,13 @@ async def get_completion(ctx, type, di):
         title = "Yearly Completion"
         range_arg = "-year"
         prefix = ""
+    elif type == "monthly":
+        if not "-year" or "-y" in di:
+            di["-year"] = datetime.datetime.now().year
+        ranges = range(1,12)
+        title = "Monthly Completion"
+        range_arg = "-month"
+        prefix = ""
 
     query_start_time = time.time()
     description = "```pascal\n"
@@ -684,6 +692,8 @@ async def get_completion(ctx, type, di):
             else:
                 start, end = rng.split("-")
                 rng = f"{start}-{end}x"
+        elif type == "monthly":
+            rng = calendar.month_abbr[rng]
 
         completion_percent = f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
         if di.get("-o") == "score" or di.get("-o") == "nomodscore":
