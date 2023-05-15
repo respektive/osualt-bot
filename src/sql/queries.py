@@ -443,15 +443,15 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
     if returnCount == True:
         return count
 
-    query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, round(stars, 2) as star_rating"
+    query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, stars"
 
     if di.get("-modded") and di["-modded"] == "true":
-        query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, round(moddedsr.star_rating::numeric, 2) as star_rating"
+        query = "select set_id, beatmaps.beatmap_id, artist, title, diffname, moddedsr.star_rating::numeric as stars"
 
     if bonusColumn != None:
         query = query + ", " + bonusColumn
     if sets:
-        query = "select set_id, max(beatmaps.beatmap_id) as beatmap_id, max(beatmaps.artist) as artist, max(beatmaps.title) as title, max(beatmaps.diffname) as diffname, round(max(beatmaps.stars), 2) as star_rating"
+        query = "select set_id, max(beatmaps.beatmap_id) as beatmap_id, max(beatmaps.artist) as artist, max(beatmaps.title) as title, max(beatmaps.diffname) as diffname, max(beatmaps.stars) as stars"
         if bonusColumn != None:
             query = query + ", max(" + bonusColumn + ") as bonuscolumn"
     query = query + " from beatmaps"
@@ -489,7 +489,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
     if sets:
         query = query + " group by set_id"
     if missingScore:
-        query = query + " group by set_id, beatmaps.beatmap_id, artist, title, diffname, star_rating"
+        query = query + " group by set_id, beatmaps.beatmap_id, artist, title, diffname, stars"
         total_missing_query = query
     query = query + " order by " + order + " " + direction + ", artist limit " + str(limit) + " offset " + str(offset)
     print("Query: " + query)
@@ -504,11 +504,11 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
 
     if bonusColumn == None:
         for b in res:
-            s = s + str(b[5])[0:6] + "★ | " + "[" + b[2] + " - " + b[3] + " [" + b[4] + "]](https://osu.ppy.sh/beatmapsets/" + str(b[0]) + "#osu/" + str(b[1]) + ")\n"
+            s = s + str(round(b[5], 2)) + "★ | " + "[" + b[2] + " - " + b[3] + " [" + b[4] + "]](https://osu.ppy.sh/beatmapsets/" + str(b[0]) + "#osu/" + str(b[1]) + ")\n"
         embed.description = s
     elif missingScore:
         for b in res:
-            s = s + str(b[5])[0:6] + "★ | " + "{:,}".format(b[6]) + " | " + "[" + b[2] + " - " + b[3] + " [" + b[4] + "]](https://osu.ppy.sh/beatmapsets/" + str(b[0]) + "#osu/" + str(b[1]) + ")\n"
+            s = s + str(round(b[5], 2)) + "★ | " + "{:,}".format(b[6]) + " | " + "[" + b[2] + " - " + b[3] + " [" + b[4] + "]](https://osu.ppy.sh/beatmapsets/" + str(b[0]) + "#osu/" + str(b[1]) + ")\n"
         embed.description = s
     else:
         for b in res:
@@ -526,7 +526,7 @@ async def get_beatmap_list(ctx, di, tables=None, sets=False, bonusColumn=None, m
                 formatBonusColumn = str(b[6])
             else:
                 formatBonusColumn = "{:,}".format(b[6])
-            s = s + str(b[5])[0:6] + "★ | " + formatBonusColumn + " | " + "[" + b[2] + " - " + b[3] + " [" + b[4] + "]](https://osu.ppy.sh/beatmapsets/" + str(b[0]) + "#osu/" + str(b[1]) + ")\n"
+            s = s + str(round(b[5], 2)) + "★ | " + formatBonusColumn + " | " + "[" + b[2] + " - " + b[3] + " [" + b[4] + "]](https://osu.ppy.sh/beatmapsets/" + str(b[0]) + "#osu/" + str(b[1]) + ")\n"
         embed.description = s
 
     if missingScore:

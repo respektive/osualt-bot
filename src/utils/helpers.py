@@ -1,4 +1,5 @@
 import datetime
+import decimal
 from textwrap import wrap
 import json
 import requests
@@ -190,25 +191,25 @@ def build_where_clause(di, table=None):
         else:
             where += " and scores.user_id in (select user_id from priorityuser)"
     if di.get("-min"):
-        min_value = float(di["-min"]) - 0.005
+        min_value = decimal.Decimal(di["-min"]) - decimal.Decimal("0.005")
         if di.get("-modded") and di["-modded"] == "true":
             where += " and moddedsr.star_rating::numeric >= " + str(min_value)
         else:
             where += " and stars >= " + str(min_value)
     if di.get("-max"):
-        max_value = float(di["-max"]) - 0.005
+        max_value = decimal.Decimal(di["-max"]) - decimal.Decimal("0.005")
         if di.get("-modded") and di["-modded"] == "true":
             where += " and moddedsr.star_rating::numeric < " + str(max_value)
         else:
             where += " and stars < " + str(max_value)
     if di.get("-range"):
         range_values = str(di["-range"]).split("-")
-        min_range = float(range_values[0]) - 0.005
-        max_range = float(range_values[1]) - 0.005
+        min_range_value = decimal.Decimal(range_values[0]) - decimal.Decimal("0.005")
+        max_range_value = decimal.Decimal(range_values[1]) - decimal.Decimal("0.005")
         if di.get("-modded") and di["-modded"] == "true":
-            where += " and moddedsr.star_rating::numeric >= " + str(min_range) + " and moddedsr.star_rating::numeric < " + str(max_range)
+            where += " and moddedsr.star_rating::numeric >= " + str(min_range_value) + " and moddedsr.star_rating::numeric < " + str(max_range_value)
         else:
-            where += " and stars >= " + str(min_range) + " and stars < " + str(max_range)
+            where += " and stars >= " + str(min_range_value) + " and stars < " + str(max_range_value)
     if di.get("-time"):
         where += " and days >= " + str(di["-time"])
     if di.get("-month") and not (di.get("-year") or di.get("-y")):
@@ -373,10 +374,10 @@ def build_where_clause(di, table=None):
         if str(di["-status"]).lower() == "miss":
             where += " and (countmiss > 0 or (maxcombo - combo) > scores.count100) and rank = 'A'"
     if di.get("-multiplier"):
-        multiplier_value = float(di["-multiplier"]) - 0.005
+        multiplier_value = decimal.Decimal(di["-multiplier"])
         where += " and multiplier = " + str(multiplier_value)
     if di.get("not-multiplier"):
-        not_multiplier_value = float(di["not-multiplier"]) - 0.005
+        not_multiplier_value = decimal.Decimal(di["not-multiplier"])
         where += " and multiplier != " + str(not_multiplier_value)
     if di.get("-rank"):
         if int(di["-rank"]) == 1:
