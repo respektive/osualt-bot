@@ -9,6 +9,16 @@ from utils.helpers import build_where_clause, unique_tables, get_mods_string, no
 from utils.format import format_leaderboard
 db = Database()
 
+blacklist = ["-is_fc", "-is_ss", "-is_nc", "-is_dt", "-is_fl", "-is_hr", "-is_hd", "-is_ht", "-is_nf", "-is_ez", "-is_so",
+                "-is_sd", "-is_pf", "-is_td", "-country", "-registered", "-is_fullmod", "-is_nm", "-is", "-isnot", "-u", "-letter",
+                "-letters", "-played-start", "-played-end", "-pp-min", "-pp-max", "-status", "-score", "-score-max", "-miss-max",
+                "-miss-min", "-combo-min", "-combo-max", "-combo", "-rankedscore", "-rankedscore-max", "-country", "-totalscore",
+                "-totalscore-max", "-profile-pp", "-profile-pp-max", "-playcount-min", "-playcount-max", "-playcount-range", "-ss-min",
+                "-ss-max", "-ss-range", "-300-max", "-300-min", "-300-range", "-100-max", "-100-min", "-100-range", "-50-max", "-50-min",
+                "-50-range", "-fc-max", "-fc-min", "-fc-range", "-s-max", "-s-min", "-s-range", "-a-max", "-a-min", "-a-range", "-clears-max",
+                "-clears-min", "-clears-range", "-pp-range", "-combo-range", "-replay", "-tragedy", "-joined-start", "-joined-end",
+                "-profile-pp-min", "-acc-min", "-acc-max", "-not", "-time", "-user", "-rank", "-score-min", "-played-date", "-c"]
+
 async def register_user(user_id):
     query = "INSERT INTO priorityuser VALUES ($1) ON CONFLICT DO NOTHING"
     await db.execute_query(query, int(user_id))
@@ -205,16 +215,6 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
     await ctx.reply(embed=embed)
 
 async def check_beatmaps(ctx, di, tables=None, sets=False):
-    blacklist = ["-is_fc", "-is_ss", "-is_nc", "-is_dt", "-is_fl", "-is_hr", "-is_hd", "-is_ht", "-is_nf", "-is_ez", "-is_so",
-                 "-is_sd", "-is_pf", "-is_td", "-country", "-registered", "-is_fullmod", "-is_nm", "-is", "-isnot", "-u", "-letter",
-                 "-letters", "-played-start", "-played-end", "-pp-min", "-pp-max", "-status", "-score", "-score-max", "-miss-max",
-                 "-miss-min", "-combo-min", "-combo-max", "-combo", "-rankedscore", "-rankedscore-max", "-country", "-totalscore",
-                 "-totalscore-max", "-profile-pp", "-profile-pp-max", "-playcount-min", "-playcount-max", "-playcount-range", "-ss-min",
-                 "-ss-max", "-ss-range", "-300-max", "-300-min", "-300-range", "-100-max", "-100-min", "-100-range", "-50-max", "-50-min",
-                 "-50-range", "-fc-max", "-fc-min", "-fc-range", "-s-max", "-s-min", "-s-range", "-a-max", "-a-min", "-a-range", "-clears-max",
-                 "-clears-min", "-clears-range", "-pp-range", "-combo-range", "-replay", "-tragedy", "-joined-start", "-joined-end",
-                 "-profile-pp-min", "-acc-min", "-acc-max", "-not", "-time", "-user", "-rank", "-score-min", "-played-date", "-c"]
-
     for key in di.copy().keys():
         if key in blacklist:
             if (key == "-user" or key == "-u") and "-unplayed" in di:
@@ -663,6 +663,11 @@ async def get_completion(ctx, type, di):
     query_start_time = time.time()
 
     if type not in ("grade", "grade_breakdown"):
+        beatmap_di = di.copy()
+        for key in di.keys():
+            if key in blacklist:
+                del beatmap_di[key]
+
         query = f"""
         SELECT
             {type}_range,
@@ -690,12 +695,20 @@ async def get_completion(ctx, type, di):
             WHERE mode = 0 AND approved IN (1, 2{', 4' if di.get('-loved') == 'true' else ''})
             {f"AND DATE_PART('year', approved_date) = {normalize_year(int(di.get('-year')))}" if type == "monthly" else ""}
             ) AS {type}_ranges
-        LEFT JOIN beatmaps ON beatmaps.beatmap_id = {type}_ranges.beatmap_id
-        LEFT JOIN beatmap_packs ON beatmap_packs.beatmap_id = beatmaps.beatmap_id
-        LEFT JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
+        LEFT JOIN (
+            SELECT DISTINCT beatmaps.beatmap_id
+            FROM beatmaps
+            INNER JOIN beatmap_packs ON beatmap_packs.beatmap_id = beatmaps.beatmap_id
+            INNER JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
             {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
             {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
             {build_where_clause(di)}
+        ) AS scores ON scores.beatmap_id = {type}_ranges.beatmap_id
+        WHERE {type}_ranges.beatmap_id IN (
+            SELECT DISTINCT beatmaps.beatmap_id
+            FROM beatmaps
+            {build_where_clause(beatmap_di)}
+        )
         GROUP BY
             {type}_range
         ORDER BY
