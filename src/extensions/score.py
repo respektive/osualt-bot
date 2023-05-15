@@ -109,7 +109,7 @@ class Score(commands.Cog):
 
     @commands.command(aliases=['highestscore'])
     async def topscore(self, ctx, *args):
-        """Total score leaderboard"""
+        """Top score leaderboard"""
         kwargs = get_args(args)
         kwargs["-o"] = "max(score)"
         kwargs["-float"] = "false"
