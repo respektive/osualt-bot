@@ -690,11 +690,14 @@ async def get_completion(ctx, type, di):
             WHERE mode = 0 AND approved IN (1, 2{', 4' if di.get('-loved') == 'true' else ''})
             {f"AND DATE_PART('year', approved_date) = {normalize_year(int(di.get('-year')))}" if type == "monthly" else ""}
             ) AS {type}_ranges
-        LEFT JOIN scores ON scores.beatmap_id = {type}_ranges.beatmap_id AND scores.user_id = {user_id}
-        INNER JOIN beatmaps ON beatmaps.beatmap_id = {type}_ranges.beatmap_id
-        {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
-        {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
-        {build_where_clause(di)}
+        LEFT JOIN (
+            SELECT DISTINCT scores.beatmap_id
+            FROM beatmaps
+            INNER JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
+            {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
+            {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
+            {build_where_clause(di)}
+        ) AS scores ON scores.beatmap_id = yearly_ranges.beatmap_id
         GROUP BY
             {type}_range
         ORDER BY
@@ -782,33 +785,49 @@ async def get_pack_completion(ctx, di):
     packs_ranges = []
     start = (page - 1) * length * group_size + 1
     i = start
+    lowest_number = i
+    highest_number = i
     while len(packs_ranges) < length:
         if group_size > 1:
             packs_ranges.append(f"{i:03}-{i+group_size-1:03}")
+            highest_number = i + group_size - 1
         else:
             packs_ranges.append(f"{i:03}")
+            highest_number = i
         i += group_size
-    
 
+    if approved:
+        di["-apacks"] = f"{lowest_number:03}-{highest_number:03}"
+    else:
+        di["-packs"] = f"{lowest_number:03}-{highest_number:03}"
+
+    print(f"{lowest_number:03}-{highest_number:03}")
     query_start_time = time.time()
 
-    pack_rows = await db.execute_query(f"""
+    query = f"""
     SELECT
     pack_id,
-    {"SUM(scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
+    {"SUM(filtered_scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT filtered_scores.beatmap_id) AS scores_count,"}
     {"SUM(top_score.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(top_score_nomod.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else "COUNT(DISTINCT beatmaps.beatmap_id) AS beatmap_count")}
     FROM 
     beatmap_packs 
     LEFT JOIN beatmaps ON beatmaps.beatmap_id = beatmap_packs.beatmap_id
-    {"LEFT JOIN top_score ON top_score.beatmap_id = beatmaps.beatmap_id" if di.get("-o") == "score" else ("LEFT JOIN top_score_nomod ON top_score_nomod.beatmap_id = beatmaps.beatmap_id" if di.get("-o") == "nomodscore" else "")}
-    LEFT JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
-    {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
-    {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
-    {build_where_clause(di)}
-    GROUP BY 
-    pack_id
-    ORDER BY 
-    pack_id""")
+    LEFT JOIN (
+        SELECT DISTINCT beatmap_packs.beatmap_id
+        FROM beatmap_packs
+        INNER JOIN beatmaps ON beatmaps.beatmap_id = beatmap_packs.beatmap_id
+        INNER JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
+        {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
+        {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
+        {build_where_clause(di)}
+    ) AS filtered_scores ON filtered_scores.beatmap_id = beatmaps.beatmap_id
+    GROUP BY
+        beatmap_packs.pack_id
+    ORDER BY
+        beatmap_packs.pack_id"""
+
+    print("QUERY:", query)
+    pack_rows = await db.execute_query(query)
     
     beatmap_packs = {}
     for row in pack_rows:
