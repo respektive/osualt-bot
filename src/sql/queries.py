@@ -732,24 +732,46 @@ async def get_pack_completion(ctx, di):
             packs_ranges.append(f"{i:03}")
         i += group_size
 
+    pack_rows = await db.execute_query(f"""
+    SELECT
+    pack_id,
+    {"SUM(scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
+    {"SUM(top_score.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(top_score_nomod.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else "COUNT(DISTINCT beatmaps.beatmap_id) AS beatmap_count")}
+    FROM 
+    beatmap_packs 
+    LEFT JOIN beatmaps ON beatmaps.beatmap_id = beatmap_packs.beatmap_id
+    {"LEFT JOIN top_score ON top_score.beatmap_id = beatmaps.beatmap_id" if di.get("-o") == "score" else ("LEFT JOIN top_score_nomod ON top_score_nomod.beatmap_id = beatmaps.beatmap_id" if di.get("-o") == "nomodscore" else "")}
+    LEFT JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
+    WHERE mode = 0 AND approved IN (1,2,4)
+    GROUP BY 
+    pack_id
+    ORDER BY 
+    pack_id""")
+    
+    beatmap_packs = {}
+    for row in pack_rows:
+        beatmap_packs[row["pack_id"]] = {
+            "scores_count": row["scores_count"],
+            "beatmap_count": row["beatmap_count"]
+        }
+
     query_start_time = time.time()
     description = "```pascal\n"
     for packs in packs_ranges:
         completion = 100
-        if approved:
-            packs = "A" + packs
-            di["-apacks"] = packs.replace("A", "")
-            di.pop("-a", None)
-            di.pop("-approved", None)
+        beatmap_count = 0
+        scores_count = 0
+        if "-" in packs:
+            pack_start, pack_end = map(int, packs.split("-"))
+            for pack in range(pack_start, pack_end + 1):
+                pack_id = f"SA{pack}" if approved else f"S{pack}"
+                beatmap_count += beatmap_packs.get(pack_id, {"beatmap_count": 0})["beatmap_count"]
+                scores_count += beatmap_packs.get(pack_id, {"scores_count": 0})["scores_count"]
         else:
-            di["-packs"] = packs
-        beatmap_count = await check_beatmaps(ctx, di.copy())
-        di["-user"] = user_id
-        scores_count = await get_beatmap_list(ctx, di, ["scores", "fc_count", "ss_count"], False, None, False, True) or 0
-        print(scores_count)
-        di.pop("-packs", None)
-        di.pop("-apacks", None)
-        di.pop("-user", None)
+            pack_id = f"SA{packs.lstrip('0')}" if approved else f"S{packs.lstrip('0')}"
+            beatmap_count += beatmap_packs.get(pack_id, {"beatmap_count": 0})["beatmap_count"]
+            scores_count += beatmap_packs.get(pack_id, {"scores_count": 0})["scores_count"]
+
         if int(beatmap_count) > 0:
             completion = int(scores_count)/int(beatmap_count)*100
 
