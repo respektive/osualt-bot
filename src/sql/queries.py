@@ -115,7 +115,7 @@ async def check_array_stats(ctx, operation, table, aggregate, di, title=None):
     await ctx.reply(embed=embed)
 
 async def check_tables(ctx, operation, table, di, embedtitle=None):
-    base = f"select username, {operation} as stat from {table} \
+    base = f"select scores.user_id, {operation} as stat from {table} \
             inner join users2 on {table}.user_id = users2.user_id \
             inner join beatmaps on {table}.beatmap_id = beatmaps.beatmap_id"
 
@@ -161,7 +161,7 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
         beatmap_count = await check_beatmaps(ctx, ndi, None, mapsets)
 
     base = base + build_where_clause(di)
-    base = base + " group by username"
+    base = base + " group by scores.user_id"
     if di.get("-o"):
         if di["-o"] not in options:
             groupby = ""
@@ -850,7 +850,7 @@ async def build_leaderboard(ctx, base, di, user=None):
                 user = str(res[0][0]).lower()
 
     rank = f"""
-        SELECT username, stat, ROW_NUMBER() OVER(ORDER BY stat {direction}) as rank
+        SELECT user_id, stat, ROW_NUMBER() OVER(ORDER BY stat {direction}) as rank
         FROM ({base}) base
     """
     
@@ -861,6 +861,7 @@ async def build_leaderboard(ctx, base, di, user=None):
             )
             SELECT rank, username, stat
             FROM leaderboard
+            INNER JOIN users2 ON users2.user_id = leaderboard.user_id
             WHERE rank <= {int(limit) * int(page)}
                 AND rank > {offset}
                 OR LOWER(username) = '{user}'
@@ -874,6 +875,7 @@ async def build_leaderboard(ctx, base, di, user=None):
             )
             SELECT rank, username, stat
             FROM leaderboard
+            INNER JOIN users2 ON users2.user_id = leaderboard.user_id
             ORDER BY rank
             LIMIT {limit}
             OFFSET {offset}
