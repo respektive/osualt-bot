@@ -812,6 +812,11 @@ async def get_pack_completion(ctx, di):
     else:
         di["-packs"] = f"{lowest_number:03}-{highest_number:03}"
 
+    beatmap_di = di.copy()
+    for key in di.keys():
+        if key in blacklist:
+            del beatmap_di[key]
+
     print(f"{lowest_number:03}-{highest_number:03}")
     query_start_time = time.time()
 
@@ -823,10 +828,16 @@ async def get_pack_completion(ctx, di):
     FROM 
     beatmap_packs 
     LEFT JOIN beatmaps ON beatmaps.beatmap_id = beatmap_packs.beatmap_id
-    LEFT JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
+    LEFT JOIN (
+        SELECT DISTINCT beatmaps.beatmap_id
+        FROM beatmaps
+        INNER JOIN beatmap_packs ON beatmap_packs.beatmap_id = beatmaps.beatmap_id
+        INNER JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
         {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
         {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
         {build_where_clause(di)}
+    ) as scores ON scores.beatmap_id = beatmaps.beatmap_id
+        {build_where_clause(beatmap_di)}
     GROUP BY
         beatmap_packs.pack_id
     ORDER BY
