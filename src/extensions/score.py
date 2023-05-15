@@ -33,7 +33,7 @@ class Score(commands.Cog):
 
     @commands.command()
     async def scoreperclear(self, ctx, *args):
-        """Total pp leaderboard"""
+        """Score per clear leaderboard"""
         kwargs = get_args(args)
         kwargs["-o"] = "sum(score)/count(*)"
         kwargs["-float"] = "false"
