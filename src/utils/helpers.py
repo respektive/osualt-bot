@@ -190,21 +190,25 @@ def build_where_clause(di, table=None):
         else:
             where += " and scores.user_id in (select user_id from priorityuser)"
     if di.get("-min"):
+        min_value = float(di["-min"]) - 0.005
         if di.get("-modded") and di["-modded"] == "true":
-            where += " and ROUND(moddedsr.star_rating::numeric, 2) >= " + str(di["-min"])
+            where += " and moddedsr.star_rating::numeric >= " + str(min_value)
         else:
-            where += " and ROUND(stars, 2) >= " + str(di["-min"])
+            where += " and stars >= " + str(min_value)
     if di.get("-max"):
+        max_value = float(di["-max"]) - 0.005
         if di.get("-modded") and di["-modded"] == "true":
-            where += " and ROUND(moddedsr.star_rating::numeric, 2) < " + str(di["-max"])
+            where += " and moddedsr.star_rating::numeric < " + str(max_value)
         else:
-            where += " and ROUND(stars, 2) < " + str(di["-max"])
+            where += " and stars < " + str(max_value)
     if di.get("-range"):
-        range = str(di["-range"]).split("-")
+        range_values = str(di["-range"]).split("-")
+        min_range = float(range_values[0]) - 0.005
+        max_range = float(range_values[1]) - 0.005
         if di.get("-modded") and di["-modded"] == "true":
-            where += " and ROUND(moddedsr.star_rating::numeric, 2) >= " + range[0] + " and ROUND(moddedsr.star_rating::numeric, 2) < " + range[1]
+            where += " and moddedsr.star_rating::numeric >= " + str(min_range) + " and moddedsr.star_rating::numeric < " + str(max_range)
         else:
-            where += " and ROUND(stars, 2) >= " + range[0] + " and ROUND(stars, 2) < " + range[1]
+            where += " and stars >= " + str(min_range) + " and stars < " + str(max_range)
     if di.get("-time"):
         where += " and days >= " + str(di["-time"])
     if di.get("-month") and not (di.get("-year") or di.get("-y")):
@@ -369,9 +373,11 @@ def build_where_clause(di, table=None):
         if str(di["-status"]).lower() == "miss":
             where += " and (countmiss > 0 or (maxcombo - combo) > scores.count100) and rank = 'A'"
     if di.get("-multiplier"):
-        where += " and ROUND(multiplier, 2) = " + str(di["-multiplier"])
+        multiplier_value = float(di["-multiplier"]) - 0.005
+        where += " and multiplier = " + str(multiplier_value)
     if di.get("not-multiplier"):
-        where += " and ROUND(multiplier, 2) != " + str(di["-multiplier"])
+        not_multiplier_value = float(di["not-multiplier"]) - 0.005
+        where += " and multiplier != " + str(not_multiplier_value)
     if di.get("-rank"):
         if int(di["-rank"]) == 1:
             #where += " and beatmaps.beatmap_id in (select beatmap_id from top_score where user_id = " + str(di["-user"]) + ")"
