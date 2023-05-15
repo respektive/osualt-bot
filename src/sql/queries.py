@@ -30,7 +30,7 @@ async def get_queue_length():
 async def check_profile(ctx, stat, di):
     
     #format the base level data
-    base = f"select username, {stat} as stat from users2 inner join users_ppv1 using (user_id)"
+    base = f"select user_id, {stat} as stat from users2 inner join users_ppv1 using (user_id)"
     base = base + build_where_clause(di)
     
     #build and execute the leaderboard creating query
@@ -43,7 +43,7 @@ async def check_profile(ctx, stat, di):
 async def check_mappers(ctx, stat, di):
 
     #format the base level data
-    base = f"select username, count(distinct {stat}) as stat from beatmaps inner join users2 on user_id = creator_id"
+    base = f"select user_id, count(distinct {stat}) as stat from beatmaps inner join users2 on user_id = creator_id"
     base = base + build_where_clause(di)
     base = base + " group by username"
 

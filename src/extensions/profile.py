@@ -234,31 +234,31 @@ class Profile(commands.Cog):
     async def highest_replays(self, ctx, *args):
         """Highest monthly replays"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "max(count)", "user_replay_counts", "username, start_date", kwargs, "Most Replays watched")
+        await check_array_stats(ctx, "max(count)", "user_replay_counts", "users2.user_id, start_date", kwargs, "Most Replays watched")
 
     @commands.command()
     async def highest_playcount(self, ctx, *args):
         """Highest monthly Play Count"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "max(count)", "user_playcounts", "username, start_date", kwargs, "Highest Play Count")
+        await check_array_stats(ctx, "max(count)", "user_playcounts", "users2.user_id, start_date", kwargs, "Highest Play Count")
 
     @commands.command(aliases=['badges'])
     async def most_badges(self, ctx, *args):
         """Most Badges"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "count(*)", "user_badges", "username", kwargs, "Most Badges")
+        await check_array_stats(ctx, "count(*)", "user_badges", "users2.user_id", kwargs, "Most Badges")
 
     @commands.command(aliases=['medals'])
     async def most_medals(self, ctx, *args):
         """Most Badges"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "count(*)", "user_achievements", "username", kwargs, "Medal Count")
+        await check_array_stats(ctx, "count(*)", "user_achievements", "users2.user_id", kwargs, "Medal Count")
 
     @commands.command()
     async def rarest_medals(self, ctx, *args):
         """Rarest Medals"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "count(*)", "user_achievements", "achievement_id::text as username", kwargs, "Rarest Medals")
+        await check_array_stats(ctx, "count(*)", "user_achievements", "achievement_id::text as user_id", kwargs, "Rarest Medals")
 
 async def setup(bot):
     await bot.add_cog(Profile(bot))
