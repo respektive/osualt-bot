@@ -178,7 +178,7 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
         base = base + di["-groupby"]
 
     if di.get("-o") and di["-o"] == "scorev0":
-        base = f"SELECT username, SUM(stat) as stat FROM ({base} ,beatmaps.set_id) best_scores GROUP BY best_scores.username"
+        base = f"SELECT user_id, SUM(stat) as stat FROM ({base} ,beatmaps.set_id) best_scores GROUP BY best_scores.user_id"
 
     print("base: ", base)
     query = await build_leaderboard(ctx, base, di)
@@ -298,7 +298,7 @@ async def check_weighted_pp(ctx, operation, di, embedtitle=None):
 
     table = table + build_where_clause(di)
 
-    base = "select username, " + str(operation) + " as stat from (" + str(table) + ") as a inner join users2 on a.user_id = users2.user_id inner join beatmaps on a.beatmap_id = beatmaps.beatmap_id group by username"
+    base = "select user_id, " + str(operation) + " as stat from (" + str(table) + ") as a inner join users2 on a.user_id = users2.user_id inner join beatmaps on a.beatmap_id = beatmaps.beatmap_id group by user_id"
     query = await build_leaderboard(ctx, base, di)
 
     print(query)
@@ -328,7 +328,7 @@ async def check_weighted_score(ctx, operation, di, embedtitle=None):
 
     table = table + build_where_clause(di)
 
-    base = "select username, " + str(operation) + " as stat from (" + str(table) + ") as a inner join users2 on a.user_id = users2.user_id inner join beatmaps on a.beatmap_id = beatmaps.beatmap_id group by username"
+    base = "select user_id, " + str(operation) + " as stat from (" + str(table) + ") as a inner join users2 on a.user_id = users2.user_id inner join beatmaps on a.beatmap_id = beatmaps.beatmap_id group by user_id"
     query = await build_leaderboard(ctx, base, di)
 
     print(query)
