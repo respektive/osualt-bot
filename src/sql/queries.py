@@ -298,7 +298,7 @@ async def check_weighted_pp(ctx, operation, di, embedtitle=None):
 
     table = table + build_where_clause(di)
 
-    base = "select user_id, " + str(operation) + " as stat from (" + str(table) + ") as a inner join users2 on a.user_id = users2.user_id inner join beatmaps on a.beatmap_id = beatmaps.beatmap_id group by user_id"
+    base = "select a.user_id, " + str(operation) + " as stat from (" + str(table) + ") as a inner join users2 on a.user_id = users2.user_id inner join beatmaps on a.beatmap_id = beatmaps.beatmap_id group by a.user_id"
     query = await build_leaderboard(ctx, base, di)
 
     print(query)
@@ -328,7 +328,7 @@ async def check_weighted_score(ctx, operation, di, embedtitle=None):
 
     table = table + build_where_clause(di)
 
-    base = "select user_id, " + str(operation) + " as stat from (" + str(table) + ") as a inner join users2 on a.user_id = users2.user_id inner join beatmaps on a.beatmap_id = beatmaps.beatmap_id group by user_id"
+    base = "select a.user_id, " + str(operation) + " as stat from (" + str(table) + ") as a inner join users2 on a.user_id = users2.user_id inner join beatmaps on a.beatmap_id = beatmaps.beatmap_id group by a.user_id"
     query = await build_leaderboard(ctx, base, di)
 
     print(query)
