@@ -783,6 +783,7 @@ async def get_completion(ctx, type, di):
 async def get_pack_completion(ctx, di):
     user_id = await get_user_id(ctx, di)
     username = await get_username(user_id)
+    di["-mode"] = "0"
 
     # Parse args
     approved = int(di.get("-approved", di.get("-a", 1))) == 2
