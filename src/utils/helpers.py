@@ -82,6 +82,14 @@ def escape_string(s):
         s = s.replace(char, escaped)
     return s
 
+def normalize_year(year):
+    if year >= 1000 and year <= 9999:  # Four-digit year
+        return year
+    elif year >= 0 and year <= 99:  # Two-digit year
+        return 2000 + year
+    else:
+        raise ValueError("Invalid year: " + str(year))
+
 def check_date_string(date_string):
     # current UTC date and time
     now = datetime.datetime.utcnow()

@@ -1,10 +1,11 @@
 import calendar
 import datetime
+import decimal
 import time
 import math
 import discord
 from .db import Database
-from utils.helpers import build_where_clause, unique_tables, get_mods_string
+from utils.helpers import build_where_clause, unique_tables, get_mods_string, normalize_year
 from utils.format import format_leaderboard
 db = Database()
 
@@ -595,15 +596,15 @@ async def get_completion(ctx, type, di):
 
     if type == "ar":
         title = "AR Completion"
-        range_arg = "-ar-range"
+        range_arg = "ar"
         prefix = "AR "
     elif type == "od":
         title = "OD Completion"
-        range_arg = "-od-range"
+        range_arg = "od"
         prefix = "OD "
     elif type == "cs":
         title = "CS Completion"
-        range_arg = "-cs-range"
+        range_arg = "cs"
         prefix = "CS "
     elif type == "stars":
         if "-modded" in di:
@@ -611,7 +612,7 @@ async def get_completion(ctx, type, di):
         if not "-g" in di and not "-l" in di:
             ranges = ["0-1", "1-2", "2-3", "3-4", "4-5", "5-6", "6-7", "7-8", "8-9", "9-10", "10-20"]
         title = "Stars Completion"
-        range_arg = "-range"
+        range_arg = "stars"
         prefix = ""
     elif type == "combo":
         if "-modded" in di:
@@ -619,7 +620,7 @@ async def get_completion(ctx, type, di):
         if not "-g" in di and not "-l" in di:
             ranges = ["0-100", "100-200", "200-300", "300-400", "400-500", "500-600", "600-700", "700-800", "800-900", "900-1000", "1000-99999"]
         title = "Combo Completion"
-        range_arg = "-maxcombo-range"
+        range_arg = "maxcombo"
         prefix = ""
     elif type == "length":
         if "-modded" in di:
@@ -627,7 +628,7 @@ async def get_completion(ctx, type, di):
         if not "-g" in di and not "-l" in di:
             ranges = ["0-60", "60-120", "120-180", "180-240", "240-300", "300-360", "360-420", "420-480", "480-540", "540-600", "600-99999"]
         title = "Length Completion"
-        range_arg = "-length-range"
+        range_arg = "length"
         prefix = ""
     elif type == "grade":
         if "-modded" in di:
@@ -647,25 +648,81 @@ async def get_completion(ctx, type, di):
     elif type == "yearly":
         ranges = range(2007, datetime.datetime.now().year + 1)
         title = "Yearly Completion"
-        range_arg = "-year"
+        range_arg = "DATE_PART('year', approved_date)"
         prefix = ""
     elif type == "monthly":
-        if not "-year" or "-y" in di:
+        if '-y' in di:
+            di["-year"] = di["-y"]
+        if not '-year' in di:
             di["-year"] = datetime.datetime.now().year
         ranges = range(1,13)
         title = "Monthly Completion"
-        range_arg = "-month"
+        range_arg = "DATE_PART('month', approved_date)"
         prefix = ""
 
     query_start_time = time.time()
+
+    if type not in ("grade", "grade_breakdown"):
+        query = f"""
+        SELECT
+            {type}_range,
+        {"SUM(scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
+        {"SUM(top_score.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(top_score_nomod.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else f"COUNT(DISTINCT {type}_ranges.beatmap_id) AS beatmap_count")}
+        FROM (
+            SELECT beatmaps.beatmap_id,
+            CASE
+        """
+
+        range_conditions = []
+        for rng in ranges:
+            if type == "yearly":
+                range_conditions.append(f"WHEN {range_arg} = {rng} THEN '{rng}'")
+            elif type == "monthly":
+                range_conditions.append(f"WHEN {range_arg} = {rng} THEN '{rng}'")
+            else:
+                start, end = str(rng).split("-")
+                range_conditions.append(f"WHEN {range_arg} >= {start} AND {range_arg} < {decimal.Decimal(end) - decimal.Decimal('0.005') if type == 'stars' else end} THEN '{rng}'")
+        
+        query += "\n".join(range_conditions)
+        query += f"""
+                END AS {type}_range
+            FROM beatmaps
+            WHERE mode = 0 AND approved IN (1, 2{', 4' if di.get('-loved') == 'true' else ''})
+            {f"AND DATE_PART('year', approved_date) = {normalize_year(int(di.get('-year')))}" if type == "monthly" else ""}
+            ) AS {type}_ranges
+        LEFT JOIN scores ON scores.beatmap_id = {type}_ranges.beatmap_id AND scores.user_id = {user_id}
+        INNER JOIN beatmaps ON beatmaps.beatmap_id = {type}_ranges.beatmap_id
+        {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
+        {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
+        {build_where_clause(di)}
+        GROUP BY
+            {type}_range
+        ORDER BY
+            {type}_range
+        """
+        print("QUERY:", query)
+        range_rows = await db.execute_query(query)
+
+        range_data = {}
+        for row in range_rows:
+            range_data[str(row[f"{type}_range"])] = {
+                "scores_count": row["scores_count"],
+                "beatmap_count": row["beatmap_count"]
+            }
+        print(range_data)
+
     description = "```pascal\n"
     for rng in ranges:
         completion = 100
         di[range_arg] = str(rng).lower()
-        if not type == "grade_breakdown":
-            beatmap_count = await check_beatmaps(ctx, di.copy())
-        di["-user"] = user_id
-        scores_count = await get_beatmap_list(ctx, di, ["scores", "fc_count", "ss_count"], False, None, False, True) or 0
+        if type not in ("grade", "grade_breakdown"):
+            beatmap_count = range_data.get(str(rng), {"beatmap_count": 0})["beatmap_count"]
+            scores_count = range_data.get(str(rng), {"scores_count": 0})["scores_count"]
+        else:
+            if not type == "grade_breakdown":
+                beatmap_count = await check_beatmaps(ctx, di.copy())
+            di["-user"] = user_id
+            scores_count = await get_beatmap_list(ctx, di, ["scores", "fc_count", "ss_count"], False, None, False, True) or 0
         print(scores_count)
         if int(beatmap_count) > 0:
             completion = int(scores_count)/int(beatmap_count)*100
@@ -731,6 +788,9 @@ async def get_pack_completion(ctx, di):
         else:
             packs_ranges.append(f"{i:03}")
         i += group_size
+    
+
+    query_start_time = time.time()
 
     pack_rows = await db.execute_query(f"""
     SELECT
@@ -742,7 +802,9 @@ async def get_pack_completion(ctx, di):
     LEFT JOIN beatmaps ON beatmaps.beatmap_id = beatmap_packs.beatmap_id
     {"LEFT JOIN top_score ON top_score.beatmap_id = beatmaps.beatmap_id" if di.get("-o") == "score" else ("LEFT JOIN top_score_nomod ON top_score_nomod.beatmap_id = beatmaps.beatmap_id" if di.get("-o") == "nomodscore" else "")}
     LEFT JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
-    WHERE mode = 0 AND approved IN (1,2,4)
+    {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
+    {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
+    {build_where_clause(di)}
     GROUP BY 
     pack_id
     ORDER BY 
@@ -755,7 +817,6 @@ async def get_pack_completion(ctx, di):
             "beatmap_count": row["beatmap_count"]
         }
 
-    query_start_time = time.time()
     description = "```pascal\n"
     for packs in packs_ranges:
         completion = 100
