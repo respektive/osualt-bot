@@ -180,9 +180,9 @@ async def getfile(ctx, di):
     elif di["-type"] == "scores":
         if int(user_id) > 0:
             where = build_where_clause(di)
-            columns = "user_id,beatmaps.beatmap_id,score,count300,count100,count50,countmiss,combo,perfect,enabled_mods,date_played,rank,pp,replay_available,accuracy,approved,submit_date,beatmaps.approved_date,last_update,artist,set_id,bpm,creator,creator_id,stars,diff_aim,diff_speed,cs,od,ar,hp,drain,source,genre,language,title,length,diffname,file_md5,mode,tags,favorites,rating,playcount,passcount,circles,sliders,spinners,maxcombo,storyboard,video,download_unavailable,audio_unavailable,star_rating,aim_diff,speed_diff,fl_diff,slider_factor,speed_note_count,modded_od,modded_ar,modded_cs,modded_hp,pack_id"
+            columns = "user_id,beatmaps.beatmap_id,score,count300,count100,count50,countmiss,combo,perfect,enabled_mods,date_played,rank,pp,replay_available,accuracy,approved,submit_date,beatmaps.approved_date,last_update,artist,set_id,bpm,creator,creator_id,stars,diff_aim,diff_speed,cs,od,ar,hp,drain,source,genre,language,title,length,diffname,file_md5,mode,tags,favorites,rating,playcount,passcount,circles,sliders,spinners,maxcombo,storyboard,video,download_unavailable,audio_unavailable,star_rating,aim_diff,speed_diff,fl_diff,slider_factor,speed_note_count,modded_od,modded_ar,modded_cs,modded_hp,packs"
             type = f"select {columns} from scores inner join beatmaps on scores.beatmap_id = beatmaps.beatmap_id left join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id and moddedsr.mods_enum = (case when is_ht = 'true' then 256 else 0 end + case when is_dt = 'true' then 64 else 0 end + case when is_hr = 'true' then 16 else 0 end + case when is_ez = 'true' then 2 else 0 end + case when is_fl = 'true' then 1024 else 0 end)"
-            type = type + " inner join (select beatmap_id, STRING_AGG(pack_id, ',') as pack_id from beatmap_packs group by beatmap_id) bp on beatmaps.beatmap_id = bp.beatmap_id "
+            type = type + " inner join (select beatmap_id, pack_id, STRING_AGG(pack_id, ',') as packs from beatmap_packs group by beatmap_id, pack_id) bp on beatmaps.beatmap_id = bp.beatmap_id "
             type = type + where
     elif di["-type"] == "scoresimple":
         if int(user_id) > 0:

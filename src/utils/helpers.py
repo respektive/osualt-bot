@@ -783,19 +783,19 @@ def build_where_clause(di, table=None):
             pack = str(di["-pack"])
         where += " and LOWER(pack_id) = '" + pack.lower() + "'"
     if di.get("-pack-min"):
-        where += " and pack_id similar to 'S[0-9]%' and cast(substr(pack_id, 2, 10) as integer) >= '" + str(di["-pack-min"]).lower() + "'"
+        where += " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) >= '" + str(di["-pack-min"]).lower() + "'"
     if di.get("-pack-max"):
-        where += " and pack_id similar to 'S[0-9]%' and cast(substr(pack_id, 2, 10) as integer) <= '" + str(di["-pack-max"]).lower() + "'"
+        where += " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) <= '" + str(di["-pack-max"]).lower() + "'"
     if di.get("-packs"):
         range = str(di["-packs"]).split("-")
         if len(range) == 1:
             range *= 2
-        where += " and pack_id similar to 'S[0-9]%' and cast(substr(pack_id, 2, 10) as integer) >= " + range[0] + " and cast(substr(pack_id, 2, 10) as integer) <= " + range[1]
+        where += " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) >= " + range[0] + " and cast(substr(pack_id, 2, 10) as integer) <= " + range[1]
     if di.get("-apacks"):
         range = str(di["-apacks"]).split("-")
         if len(range) == 1:
             range *= 2
-        where += " and pack_id similar to 'SA[0-9]%' and cast(substr(pack_id, 3, 10) as integer) >= " + range[0] + " and cast(substr(pack_id, 3, 10) as integer) <= " + range[1]
+        where += " and pack_id ~ '^SA\d+$' and cast(substr(pack_id, 3, 10) as integer) >= " + range[0] + " and cast(substr(pack_id, 3, 10) as integer) <= " + range[1]
     if di.get("-tragedy"):
         if di["-tragedy"] == "100":
             where += " and (count100 = 1 and countmiss = 0 and count50 = 0)"
