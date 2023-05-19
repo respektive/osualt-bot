@@ -672,7 +672,7 @@ async def get_completion(ctx, type, di):
         SELECT
             {type}_range,
         {"SUM(scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
-        {"SUM(top_score.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(top_score_nomod.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else f"COUNT(DISTINCT {type}_ranges.beatmap_id) AS beatmap_count")}
+        {"SUM(scores.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(scores.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else f"COUNT(DISTINCT {type}_ranges.beatmap_id) AS beatmap_count")}
         FROM (
             SELECT beatmaps.beatmap_id,
             CASE
@@ -696,7 +696,8 @@ async def get_completion(ctx, type, di):
             {f"AND DATE_PART('year', approved_date) = {normalize_year(int(di.get('-year')))}" if type == "monthly" else ""}
             ) AS {type}_ranges
         LEFT JOIN (
-            SELECT DISTINCT beatmaps.beatmap_id
+            SELECT beatmaps.beatmap_id, scores.score,
+            {"top_score_nomod.top_score_nomod" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else "top_score.top_score"}
             FROM beatmaps
             LEFT JOIN beatmap_packs ON beatmap_packs.beatmap_id = beatmaps.beatmap_id
             INNER JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
