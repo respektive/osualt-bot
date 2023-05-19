@@ -82,7 +82,14 @@ class Advanced(commands.Cog):
                 await check_tables(ctx, "round((cast(sum(beatmaps.length) * 100::float / " +  beatmap_length + " as numeric)), 3)", "scores", kwargs, "Length Completion")
                 
             elif kwargs["-o"] == "length":
-                await check_tables(ctx, "sum(beatmaps.length)", "scores", kwargs, "Sum of beatmaps length")
+                if kwargs.get("-modded") == "true":
+                    await check_tables(ctx, """SUM(CASE
+                            WHEN scores.is_dt THEN beatmaps.length / 1.5
+                            WHEN scores.is_ht THEN beatmaps.length / 0.75
+                            ELSE beatmaps.length
+                        END)""", "scores", kwargs, "Sum of beatmaps length")
+                else:
+                    await check_tables(ctx, """SUM(beatmaps.length)""", "scores", kwargs, "Sum of beatmaps length")
                 
             elif kwargs["-o"] == "score" or kwargs["-o"] == "scoer":
                 await check_tables(ctx, "sum(scores.score)", "scores", kwargs, kwargs["-o"].upper())

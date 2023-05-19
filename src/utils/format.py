@@ -26,7 +26,7 @@ def format_leaderboard(rows, di=""):
             split_number = fixed_number.split(".")
             if int(split_number[1]) == 0:
                 fixed_number = split_number[0]
-        elif di.__contains__("-fomarttime") and di["-fomarttime"] == "true":
+        elif di.__contains__("-formattime") and di["-formattime"] == "true":
             hours = int(row[2] / 3600)
             minutes = int(row[2] / 60) % 60
             seconds = int(row[2]) % 60
