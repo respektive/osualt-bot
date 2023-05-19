@@ -152,3 +152,4 @@ cython_debug/
 #.idea/
 tmp.txt
 collection.osdb
+.vscode/settings.json
