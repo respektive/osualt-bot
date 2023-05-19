@@ -86,19 +86,19 @@ async def generateosdb(ctx, di):
         query = query + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
         count = count + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
 
-    if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs"):
-        query = query + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
-        count = count + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
-    if di.get("-o") and di["-o"] == "score" or (di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max")):
-        query = query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
-        count = count + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
-    elif di.get("-o") and di["-o"] == "nomodscore" or (di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max")):
-        query = query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
-        count = count + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
+        if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs"):
+            query = query + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
+            count = count + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
+        if di.get("-o") and di["-o"] == "score" or (di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max")):
+            query = query + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
+            count = count + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
+        elif di.get("-o") and di["-o"] == "nomodscore" or (di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max")):
+            query = query + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
+            count = count + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
 
-    if di.get("-rank"):
-        query = query + " inner join (select beatmap_id, user_id from top_score) firsts on beatmaps.beatmap_id = firsts.beatmap_id"
-        count = count + " inner join (select beatmap_id, user_id from top_score) firsts on beatmaps.beatmap_id = firsts.beatmap_id"
+        if di.get("-rank"):
+            query = query + " inner join (select beatmap_id, user_id from top_score) firsts on beatmaps.beatmap_id = firsts.beatmap_id"
+            count = count + " inner join (select beatmap_id, user_id from top_score) firsts on beatmaps.beatmap_id = firsts.beatmap_id"
 
     where = build_where_clause(di)
     query = query + where
