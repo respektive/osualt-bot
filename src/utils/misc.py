@@ -32,7 +32,7 @@ def format_str(s):
 
 async def generateosdb(ctx, di):
     if not di.get("-mode"):
-        di["-mode"] = 0
+        di["-mode"] = "0"
 
     if not di.get("-loved"):
         di["-loved"] = "false"
@@ -80,10 +80,11 @@ async def generateosdb(ctx, di):
             query = query + " inner join neverbeendted on neverbeendted.beatmap_id = beatmaps.beatmap_id"
             count = count + " inner join neverbeendted on neverbeendted.beatmap_id = beatmaps.beatmap_id"
 
-    query = query + " inner join fc_count on beatmaps.beatmap_id = fc_count.beatmap_id"
-    count = count + " inner join fc_count on beatmaps.beatmap_id = fc_count.beatmap_id"
-    query = query + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
-    count = count + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
+    if di["-mode"] == "0":
+        query = query + " inner join fc_count on beatmaps.beatmap_id = fc_count.beatmap_id"
+        count = count + " inner join fc_count on beatmaps.beatmap_id = fc_count.beatmap_id"
+        query = query + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
+        count = count + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
 
     if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs"):
         query = query + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"

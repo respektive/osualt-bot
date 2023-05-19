@@ -35,8 +35,7 @@ class Beatmaps(commands.Cog):
         """Lists every osu! standard map"""
         kwargs = get_args(args)
         kwargs["-notscorestable"] = "true"
-        if not (kwargs.get("-m") or kwargs.get("-mods")):
-            kwargs["-mods"] = "NM"
+        if kwargs.get("-m") or kwargs.get("-mods"):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if kwargs.get("-order"):
@@ -50,8 +49,7 @@ class Beatmaps(commands.Cog):
         """Lists every osu! standard mapset"""
         kwargs = get_args(args)
         kwargs["-notscorestable"] = "true"
-        if not (kwargs.get("-m") or kwargs.get("-mods")):
-            kwargs["-mods"] = "NM"
+        if kwargs.get("-m") or kwargs.get("-mods"):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
 
@@ -62,8 +60,7 @@ class Beatmaps(commands.Cog):
         """Displays mapsets with a difference in days between submitted date and ranked date"""
         kwargs = get_args(args)
         kwargs["-notscorestable"] = "true"
-        if not (kwargs.get("-m") or kwargs.get("-mods")):
-            kwargs["-mods"] = "NM"
+        if kwargs.get("-m") or kwargs.get("-mods"):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         kwargs["-order"] = "bonuscolumn"
@@ -77,8 +74,7 @@ class Beatmaps(commands.Cog):
         """Displays map difficulties with the least playcount (broken)"""
         kwargs = get_args(args)
         kwargs["-notscorestable"] = "true"
-        if not (kwargs.get("-m") or kwargs.get("-mods")):
-            kwargs["-mods"] = "NM"
+        if kwargs.get("-m") or kwargs.get("-mods"):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         kwargs["-order"] = "playcount"
