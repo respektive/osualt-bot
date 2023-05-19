@@ -86,7 +86,7 @@ async def generateosdb(ctx, di):
         query = query + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
         count = count + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
 
-        if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs"):
+        if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs") or di.get("-apacks"):
             query = query + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
             count = count + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
         if di.get("-o") and di["-o"] == "score" or (di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max")):
@@ -189,7 +189,7 @@ async def getfile(ctx, di):
         if int(user_id) > 0:
             where = build_where_clause(di)
             type = f"select set_id, beatmaps.beatmap_id, approved_date, round(stars, 2) as stars, rank from scores inner join beatmaps on scores.beatmap_id = beatmaps.beatmap_id"
-            if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs"):
+            if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs") or di.get("-apacks"):
                 type = type + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
             type = type + where
     elif di["-type"] == "beatmaps" or di["-type"] == "beatmapsimple":
@@ -204,7 +204,7 @@ async def getfile(ctx, di):
             type = "select set_id, beatmaps.beatmap_id, approved_date, round(stars, 2) as stars, artist, title, diffname from beatmaps"
         else:
             type = f"select * from beatmaps"
-        if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs"):
+        if di.get("-pack") or di.get("-pack-min") or di.get("-pack-max") or di.get("-packs") or di.get("-apacks"):
             type = type + " inner join beatmap_packs on beatmaps.beatmap_id = beatmap_packs.beatmap_id"
         type = type + where
     elif di["-type"] == "nomodnumberones":
