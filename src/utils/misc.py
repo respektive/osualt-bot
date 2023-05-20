@@ -259,6 +259,7 @@ async def updatelists(client):
             rows = await db.execute_query(query)
             b = rows[0] if len(rows) > 0 else None
             if b is None:
+                await db.execute_query("delete from newfcs where beatmap_id = " + str(beatmap))
                 continue
             approved_date = b[3]
             minutes = b[6] // 60
@@ -317,6 +318,7 @@ CS **{b[8]:.1f}** • AR **{b[9]:.1f}** • OD **{b[10]:.1f}** • HP **{b[11]:.
             rows = await db.execute_query(query)
             b = rows[0] if len(rows) > 0 else None
             if b is None:
+                await db.execute_query("delete from newSSs where beatmap_id = " + str(beatmap))
                 continue
             approved_date = b[3]
             minutes = b[6] // 60
@@ -375,6 +377,7 @@ CS **{b[8]:.1f}** • AR **{b[9]:.1f}** • OD **{b[10]:.1f}** • HP **{b[11]:.
             rows = await db.execute_query(query)
             b = rows[0] if len(rows) > 0 else None
             if b is None:
+                await db.execute_query("delete from newdtfcs where beatmap_id = " + str(beatmap))
                 continue
             approved_date = b[3]
             minutes = b[6] // 60
