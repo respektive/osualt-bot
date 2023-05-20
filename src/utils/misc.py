@@ -248,6 +248,7 @@ async def updatelists(client):
     channel = client.get_channel(793570054008340511)
     li = await db.execute_query("select * from newfcs")
     if len(li) > 0:
+        print(len(li), "new fcs")
         for entry in li:
             beatmap, user, date = entry[0], entry[1], entry[2]
             query = f"""select artist, title, diffname, beatmaps.approved_date, set_id, moddedsr.star_rating, length, maxcombo, 
@@ -305,6 +306,7 @@ CS **{b[8]:.1f}** • AR **{b[9]:.1f}** • OD **{b[10]:.1f}** • HP **{b[11]:.
     
     li = await db.execute_query("select * from newSSs")
     if len(li) > 0:
+        print(len(li), "new sss")
         for entry in li:
             beatmap, user, date = entry[0], entry[1], entry[2]
             query = f"""select artist, title, diffname, beatmaps.approved_date, set_id, moddedsr.star_rating, length, maxcombo, 
@@ -362,6 +364,7 @@ CS **{b[8]:.1f}** • AR **{b[9]:.1f}** • OD **{b[10]:.1f}** • HP **{b[11]:.
     
     li = await db.execute_query("select * from newdtfcs")
     if len(li) > 0:
+        print(len(li), "new dt fcs")
         for entry in li:
             beatmap, user, date = entry[0], entry[1], entry[2]
             query = f"""select artist, title, diffname, beatmaps.approved_date, set_id, moddedsr.star_rating, length, maxcombo, 
