@@ -1,7 +1,9 @@
+import os
 from discord.ext import commands
 from utils.helpers import get_args
 from sql.queries import get_queue_length, register_user, get_user_id, insert_into_scorequeue
 from utils.misc import generateosdb, getfile
+from card.data import get_card
 
 class Misc(commands.Cog):
     def __init__(self, bot):
@@ -46,6 +48,17 @@ class Misc(commands.Cog):
         """Returns the entire list in a file, if discord allows it."""
         kwargs = get_args(args)
         await getfile(ctx, kwargs)
+
+    @commands.command()
+    async def card(self, ctx, *args):
+        """Generates a user card image."""
+        kwargs = get_args(args)
+        user_id = await get_user_id(ctx, kwargs)
+        embed, file = await get_card(user_id)
+        await ctx.reply(embed=embed, file=file)
+        # Clean up files after sending to discord
+        os.remove(f"card_{user_id}.svg")
+        os.remove(f"card_{user_id}.png")
 
 async def setup(bot):
     await bot.add_cog(Misc(bot))
