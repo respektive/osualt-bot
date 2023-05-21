@@ -49,16 +49,18 @@ class Misc(commands.Cog):
         kwargs = get_args(args)
         await getfile(ctx, kwargs)
 
-    @commands.command()
-    async def card(self, ctx, *args):
-        """Generates a user card image."""
-        kwargs = get_args(args)
-        user_id = await get_user_id(ctx, kwargs)
-        embed, file = await get_card(user_id)
-        await ctx.reply(embed=embed, file=file)
-        # Clean up files after sending to discord
-        os.remove(f"card_{user_id}.svg")
-        os.remove(f"card_{user_id}.png")
+    # Pretty broken on prod rn
+
+    # @commands.command()
+    # async def card(self, ctx, *args):
+    #     """Generates a user card image."""
+    #     kwargs = get_args(args)
+    #     user_id = await get_user_id(ctx, kwargs)
+    #     embed, file = await get_card(user_id)
+    #     await ctx.reply(embed=embed, file=file)
+    #     # Clean up files after sending to discord
+    #     os.remove(f"card_{user_id}.svg")
+    #     os.remove(f"card_{user_id}.png")
 
 async def setup(bot):
     await bot.add_cog(Misc(bot))
