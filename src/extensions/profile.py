@@ -110,7 +110,7 @@ class Profile(commands.Cog):
     async def playtime(self, ctx, *args):
         """Global Play Time leaderboard"""
         kwargs = get_args(args)
-        kwargs["-fomarttime"] = "true"
+        kwargs["-formattime"] = "true"
         await get_profile_leaderboard(ctx, "playtime", "Play Time", **kwargs)
 
     @commands.command()
