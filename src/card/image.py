@@ -329,6 +329,75 @@ def draw_join_date(join_date):
     )
 
 
+def draw_global_rank(global_rank):
+    header_font_size = 48
+    rank_font_size = 96
+    tier = get_rank_tier(global_rank)
+    colors = tier["colors"]
+    header_text = "Global Rank"
+    rank_text = f"#{global_rank:,}"
+
+    font_header = ImageFont.truetype(TORUS_SEMIBOLD, header_font_size)
+    font_rank = ImageFont.truetype(tier["font_path"], rank_font_size)
+
+    _, _, header_width, header_height = font_header.getbbox(header_text)
+    _, _, value_width, value_height = font_rank.getbbox(rank_text)
+
+    width = max(header_width, value_width)
+    height = header_height + value_height
+
+    rank_image = Image.new("RGBA", (width, height))
+    rank_draw = ImageDraw.Draw(rank_image)
+
+    rank_draw.text((0, 0), header_text, font=font_header, fill="white")
+
+    if len(colors) < 2:
+        rank_draw.text((0, header_height), rank_text, font=font_rank, fill=colors[0])
+
+        return rank_image
+
+    start_color = colors[0]
+    end_color = colors[1]
+
+    gradient = np.linspace(0, 1, value_height)
+
+    gradient_image = Image.new("RGBA", (value_width, value_height))
+    gradient_draw = ImageDraw.Draw(gradient_image)
+
+    for j in range(value_height):
+        r = int(start_color[0] + (end_color[0] - start_color[0]) * gradient[j])
+        g = int(start_color[1] + (end_color[1] - start_color[1]) * gradient[j])
+        b = int(start_color[2] + (end_color[2] - start_color[2]) * gradient[j])
+        gradient_color = (r, g, b)
+
+        gradient_draw.line([(0, j), (value_width, j)], fill=gradient_color, width=1)
+
+    alpha_image = Image.new("L", (value_width, value_height))
+    alpha_draw = ImageDraw.Draw(alpha_image)
+    alpha_draw.text((0, 0), rank_text, font=font_rank, fill=255)
+
+    gradient_image.putalpha(alpha_image)
+    rank_image.alpha_composite(gradient_image, (0, header_height))
+
+    return rank_image
+
+
+def draw_country_rank(country_rank):
+    return None
+
+
+def draw_score_rank(score_rank):
+    return None
+
+
+def draw_ranks(user_data):
+    ranks = [
+        draw_global_rank(user_data["global_rank"]),
+        draw_country_rank(user_data["country_rank"]),
+        draw_score_rank(user_data["score_rank"]),
+    ]
+
+
 def draw_header(user_data, avatar_data):
     avatar_color = get_image_color(avatar_data)
     draw_header_background(avatar_color, user_data["cover_url"])
@@ -350,14 +419,64 @@ def draw_header(user_data, avatar_data):
     draw_join_date(user_data["join_date"])
 
 
+def draw_body(user_data):
+    draw_ranks(user_data)
+
+
+# Card design is using flyte's Player Card design as a base and builds on top of it
+# https://www.figma.com/file/ocltATjJqWQZBravhPuqjB/UI%2FPlayer-Card
 def draw_card(user_data, avatar_data):
     draw_background()
     draw_header(user_data, avatar_data)
+    draw_body(user_data)
 
     return image
 
 
 # Helper functions
+
+
+# Colors taken from flyte's Tier Colours Design
+# https://www.figma.com/file/YHWhp9wZ089YXgB7pe6L1k/Tier-Colours
+def get_rank_tier(rank):
+    # Lustrous
+    if rank <= 100:
+        colors = [(255, 230, 0), (237, 130, 255)]
+        font_path = TORUS_BOLD
+    # Radiant
+    elif rank <= 1_000:
+        colors = [(151, 220, 255), (237, 130, 255)]
+        font_path = TORUS_BOLD
+    # Rhodium
+    elif rank <= 5_000:
+        colors = [(217, 248, 211), (158, 209, 148)]
+        font_path = TORUS_BOLD
+    # Platinum
+    elif rank <= 10_000:
+        colors = [(168, 240, 239), (82, 224, 223)]
+        font_path = TORUS_BOLD
+    # Gold
+    elif rank <= 50_000:
+        colors = [(240, 228, 168), (224, 201, 82)]
+        font_path = TORUS_BOLD
+    # Silver
+    elif rank <= 100_000:
+        colors = [(224, 224, 235), (163, 163, 194)]
+        font_path = TORUS_BOLD
+    # Bronze
+    elif rank <= 500_000:
+        colors = [(184, 143, 122), (133, 92, 71)]
+        font_path = TORUS_SEMIBOLD
+    # Iron
+    elif rank <= 1_000_000:
+        colors = [(186, 178, 171)]
+        font_path = TORUS_REGULAR
+    # Anyone else
+    else:
+        colors = [(219, 240, 233)]
+        font_path = TORUS_REGULAR
+
+    return {"colors": colors, "font_path": font_path}
 
 
 def fit_image_to_aspect_ratio(image_input, aspect_ratio):
