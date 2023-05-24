@@ -54,6 +54,8 @@ class Misc(commands.Cog):
         """Generates a user card image."""
         kwargs = get_args(args)
         user_id = await get_user_id(ctx, kwargs)
+        if not user_id:
+            raise ValueError("User not in the database.")
         embed, file = await get_card(user_id, kwargs)
         await ctx.reply(embed=embed, file=file)
 
