@@ -382,19 +382,35 @@ def draw_global_rank(global_rank):
     return rank_image
 
 
-def draw_country_rank(country_rank):
-    return None
+def draw_generic_rank(text, rank):
+    header_font_size = 48
+    rank_font_size = 96
 
+    rank_text = f"#{rank:,}"
 
-def draw_score_rank(score_rank):
-    return None
+    font_header = ImageFont.truetype(TORUS_SEMIBOLD, header_font_size)
+    font_rank = ImageFont.truetype(TORUS_REGULAR, rank_font_size)
+
+    _, _, header_width, header_height = font_header.getbbox(text)
+    _, _, value_width, value_height = font_rank.getbbox(rank_text)
+
+    width = max(header_width, value_width)
+    height = header_height + value_height
+
+    rank_image = Image.new("RGBA", (width, height))
+    rank_draw = ImageDraw.Draw(rank_image)
+
+    rank_draw.text((0, 0), text, font=font_header, fill="white")
+    rank_draw.text((0, header_height), rank_text, font=font_rank, fill="#DBF0E9")
+
+    return rank_image
 
 
 def draw_ranks(user_data):
     ranks = [
         draw_global_rank(user_data["global_rank"]),
-        draw_country_rank(user_data["country_rank"]),
-        draw_score_rank(user_data["score_rank"]),
+        draw_generic_rank("Country Rank", user_data["country_rank"]),
+        draw_generic_rank("Score Rank", user_data["score_rank"]),
     ]
 
 
