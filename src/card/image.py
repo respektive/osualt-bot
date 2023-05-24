@@ -335,7 +335,7 @@ def draw_global_rank(global_rank):
     tier = get_rank_tier(global_rank)
     colors = tier["colors"]
     header_text = "Global Rank"
-    rank_text = f"#{global_rank:,}"
+    rank_text = f"#{global_rank:,}" if global_rank and global_rank > 0 else "-"
 
     font_header = ImageFont.truetype(TORUS_SEMIBOLD, header_font_size)
     font_rank = ImageFont.truetype(tier["font_path"], rank_font_size)
@@ -386,7 +386,7 @@ def draw_generic_rank(text, rank):
     header_font_size = 48
     rank_font_size = 96
 
-    rank_text = f"#{rank:,}"
+    rank_text = f"#{rank:,}" if rank and rank > 0 else "-"
 
     font_header = ImageFont.truetype(TORUS_SEMIBOLD, header_font_size)
     font_rank = ImageFont.truetype(TORUS_REGULAR, rank_font_size)
@@ -455,8 +455,12 @@ def draw_card(user_data, avatar_data):
 # Colors taken from flyte's Tier Colours Design
 # https://www.figma.com/file/YHWhp9wZ089YXgB7pe6L1k/Tier-Colours
 def get_rank_tier(rank):
+    # unranked players
+    if not rank or rank < 1:
+        colors = [(219, 240, 233)]
+        font_path = TORUS_REGULAR
     # Lustrous
-    if rank <= 100:
+    elif rank <= 100:
         colors = [(255, 230, 0), (237, 130, 255)]
         font_path = TORUS_BOLD
     # Radiant
