@@ -1,14 +1,20 @@
 import os
 from discord.ext import commands
 from utils.helpers import get_args
-from sql.queries import get_queue_length, register_user, get_user_id, insert_into_scorequeue
+from sql.queries import (
+    get_queue_length,
+    register_user,
+    get_user_id,
+    insert_into_scorequeue,
+)
 from utils.misc import generateosdb, getfile
 from card.data import get_card
+
 
 class Misc(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+
     @commands.command()
     async def queuelength(self, ctx):
         """Checks how long the !queue will take"""
