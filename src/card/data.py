@@ -38,14 +38,23 @@ async def get_user_data(user_id, kwargs):
             LEFT JOIN beatmaps ON beatmaps.beatmap_id = scores.beatmap_id
             WHERE scores.user_id = {user_id} AND beatmaps.mode = 0
             AND beatmaps.approved IN (1, 2{', 4' if "-loved" in kwargs and kwargs["-loved"] == 'true' else ''})
+        ), ranked_score_rank_cte AS (
+            SELECT
+                user_id,
+                ranked_score,
+                RANK() OVER (ORDER BY ranked_score DESC) AS score_rank
+            FROM users2
+            WHERE user_id = {user_id}
         )
         SELECT
             users2.*,
             beatmaps_count_cte.*,
-            scores_count_cte.*
+            scores_count_cte.*,
+            ranked_score_rank_cte.score_rank
         FROM users2
         CROSS JOIN beatmaps_count_cte
         CROSS JOIN scores_count_cte
+        CROSS JOIN ranked_score_rank_cte
         WHERE users2.user_id = {user_id}"""
     )
     if len(rows) < 1:
