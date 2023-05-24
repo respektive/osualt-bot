@@ -413,6 +413,17 @@ def draw_ranks(user_data):
         draw_generic_rank("Score Rank", user_data["score_rank"]),
     ]
 
+    total_ranks_width = sum(rank.width for rank in ranks)
+    num_ranks = len(ranks)
+    spacing = (IMAGE_WIDTH - total_ranks_width) // (num_ranks + 1)
+
+    padding = IMAGE_HEIGHT // 30
+    y = (IMAGE_HEIGHT // 4) + padding
+    x_offset = spacing
+    for rank in ranks:
+        image.alpha_composite(rank, (x_offset, y))
+        x_offset += rank.width + spacing
+
 
 def draw_header(user_data, avatar_data):
     avatar_color = get_image_color(avatar_data)
