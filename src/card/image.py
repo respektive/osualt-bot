@@ -1,5 +1,6 @@
 import datetime
 import json
+from decimal import Decimal, ROUND_HALF_UP
 import os
 from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import io
@@ -425,6 +426,68 @@ def draw_ranks(user_data):
         x_offset += rank.width + spacing
 
 
+def draw_stat(header, value):
+    header_font = ImageFont.truetype(TORUS_SEMIBOLD, 44)
+    stat_font = ImageFont.truetype(TORUS_REGULAR, 60)
+
+    if header in ("Accuracy", "Completion"):
+        stat_text = f"{value}%"
+    elif header == "Play Time":
+        hours = value // 3600
+        minutes = (value % 3600) // 60
+        stat_text = f"{hours}h {minutes}m"
+    else:
+        stat_text = f"{value:,}"
+
+    _, _, header_width, _ = header_font.getbbox(header)
+    _, _, value_width, _ = stat_font.getbbox(stat_text)
+
+    width = max(header_width, value_width)
+    height = 128
+
+    stat_image = Image.new("RGBA", (width, height))
+    stat_draw = ImageDraw.Draw(stat_image)
+
+    stat_draw.text((0, 0), header, font=header_font, fill="white")
+    stat_draw.text((0, 52), stat_text, font=stat_font, fill="#DBF0E9")
+
+    return stat_image
+
+
+def draw_stats_row(stats, y_offset=0):
+    total_stats_width = sum(stat.width for stat in stats)
+    num_stats = len(stats)
+    spacing = (IMAGE_WIDTH - total_stats_width) // (num_stats + 1)
+
+    y = int(IMAGE_HEIGHT / 2.1) + y_offset
+    x_offset = spacing
+    for stat in stats:
+        image.alpha_composite(stat, (x_offset, y))
+        x_offset += stat.width + spacing
+
+
+def draw_stats(user_data):
+    row1 = [
+        draw_stat("Medals", user_data["medal_count"]),
+        draw_stat("pp", user_data["pp"].quantize(0, ROUND_HALF_UP)),
+        draw_stat("Play Time", user_data["playtime"]),
+        draw_stat("Play Count", user_data["playcount"]),
+        draw_stat("Accuracy", user_data["hit_accuracy"]),
+    ]
+    row2 = [
+        draw_stat("Ranked Score", user_data["ranked_score"]),
+        draw_stat("Total Score", user_data["total_score"]),
+        draw_stat("Clears", user_data["scores_count"]),
+        draw_stat(
+            "Completion",
+            round(user_data["scores_count"] / user_data["beatmaps_count"] * 100, 2),
+        ),
+    ]
+
+    draw_stats_row(row1)
+    draw_stats_row(row2, 144)
+
+
 def draw_header(user_data, avatar_data):
     avatar_color = get_image_color(avatar_data)
     draw_header_background(avatar_color, user_data["cover_url"])
@@ -448,6 +511,7 @@ def draw_header(user_data, avatar_data):
 
 def draw_body(user_data):
     draw_ranks(user_data)
+    draw_stats(user_data)
 
 
 # Card design is using flyte's Player Card design as a base and builds on top of it
