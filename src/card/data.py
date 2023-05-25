@@ -73,7 +73,7 @@ async def get_card(user_id, kwargs):
     query_start_time = time.time()
 
     user_data = await get_user_data(user_id, kwargs)
-    # Fallback to generating a avatar_url if for some reason the url is not set
+    # Fallback to generating an avatar_url if for some reason the url is not set
     avatar_url = user_data["avatar_url"] or get_avatar_url_from_id(user_id)
     avatar_data = get_image_data_from_url(avatar_url)
     image = draw_card(user_data, avatar_data)
