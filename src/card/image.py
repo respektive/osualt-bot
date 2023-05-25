@@ -575,35 +575,31 @@ def get_rank_tier(rank):
         colors = [(219, 240, 233)]
         font_path = TORUS_REGULAR
     # Lustrous
-    elif rank <= 100:
+    elif rank == 1:
         colors = [(255, 230, 0), (237, 130, 255)]
         font_path = TORUS_BOLD
     # Radiant
-    elif rank <= 1_000:
+    elif rank <= 10:
         colors = [(151, 220, 255), (237, 130, 255)]
         font_path = TORUS_BOLD
-    # Rhodium
-    elif rank <= 5_000:
-        colors = [(217, 248, 211), (158, 209, 148)]
-        font_path = TORUS_BOLD
     # Platinum
-    elif rank <= 10_000:
+    elif rank <= 50:
         colors = [(168, 240, 239), (82, 224, 223)]
         font_path = TORUS_BOLD
     # Gold
-    elif rank <= 50_000:
+    elif rank <= 100:
         colors = [(240, 228, 168), (224, 201, 82)]
         font_path = TORUS_BOLD
     # Silver
-    elif rank <= 100_000:
+    elif rank <= 500:
         colors = [(224, 224, 235), (163, 163, 194)]
         font_path = TORUS_BOLD
     # Bronze
-    elif rank <= 500_000:
+    elif rank <= 1_000:
         colors = [(184, 143, 122), (133, 92, 71)]
         font_path = TORUS_SEMIBOLD
     # Iron
-    elif rank <= 1_000_000:
+    elif rank <= 5_000:
         colors = [(186, 178, 171)]
         font_path = TORUS_REGULAR
     # Anyone else
