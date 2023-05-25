@@ -25,6 +25,8 @@ def draw_header(image, draw, user_data, avatar_data):
     draw_header_background(image, avatar_color, user_data["cover_url"])
     draw_avatar(image, avatar_data)
     draw_user_group_line(draw, user_data)
+    draw_level(image, draw, user_data["level"])
+    draw_flag(image, user_data["country_code"])
     draw_username(image, draw, user_data["username"])
     draw_osu_logo(image)
     pills = []
@@ -36,8 +38,6 @@ def draw_header(image, draw, user_data, avatar_data):
         pills.append(draw_supporter_pill(user_data["support_level"]))
 
     draw_pills(image, pills)
-    draw_level(image, draw, user_data["level"])
-    draw_flag(image, user_data["country_code"])
     draw_join_date(draw, user_data["join_date"])
 
 
