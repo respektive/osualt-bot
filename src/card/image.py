@@ -21,16 +21,10 @@ from card.helpers import (
     convert_country_code_to_unicode,
     fit_image_to_aspect_ratio,
 )
+from card.background import draw_background
 
 image = Image.new("RGBA", (IMAGE_WIDTH, IMAGE_HEIGHT), (0, 0, 0, 0))
 draw = ImageDraw.Draw(image)
-
-
-def draw_background():
-    corner_radius = calculate_corner_radius(IMAGE_WIDTH, IMAGE_HEIGHT, 5)
-    draw.rounded_rectangle(
-        (0, 0, IMAGE_WIDTH, IMAGE_HEIGHT), fill="#2E3835", radius=corner_radius
-    )
 
 
 def draw_header_background(avatar_color, cover_url):
@@ -603,7 +597,7 @@ def draw_body(user_data):
 # Card design is using flyte's Player Card design as a base and builds on top of it
 # https://www.figma.com/file/ocltATjJqWQZBravhPuqjB/UI%2FPlayer-Card
 def draw_card(user_data, avatar_data):
-    draw_background()
+    draw_background(draw)
     draw_header(user_data, avatar_data)
     draw_body(user_data)
 
