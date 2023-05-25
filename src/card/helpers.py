@@ -109,4 +109,4 @@ def convert_country_code_to_unicode(country_code):
         for char in country_code.upper()
         if char.isalpha()
     ]
-    return "-".join(unicode_hex_values)
+    return "-".join(unicode_hex_values).lower()

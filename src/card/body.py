@@ -212,7 +212,7 @@ def draw_stats(image, user_data):
 
 def draw_grade(grade, count):
     grade_image = Image.open(f"src/resources/images/grades/{grade}.png").convert("RGBA")
-    grade_image.thumbnail((IMAGE_HEIGHT // 8, IMAGE_HEIGHT // 8))
+    grade_image.thumbnail((IMAGE_HEIGHT // 8, IMAGE_HEIGHT // 8), Image.LANCZOS)
     font = ImageFont.truetype(TORUS_SEMIBOLD, 48)
     padding = 10
     count_text = f"{count:,}"

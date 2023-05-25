@@ -307,6 +307,7 @@ def draw_flag(image, country_code):
         country_flag = Image.open(flag_path).convert("RGBA")
     else:
         country_flag = Image.open("src/resources/images/unknown.png").convert("RGBA")
+        country_flag.thumbnail((72, 72), Image.LANCZOS)
 
     x = int(IMAGE_WIDTH / 1.25)
     y = int((IMAGE_HEIGHT / 4 - country_flag.height) / 2)
