@@ -528,6 +528,45 @@ def draw_stats(user_data):
     draw_stats_row(row2, 144)
 
 
+def draw_grade(grade, count):
+    grade_image = Image.open(f"src/resources/images/grades/{grade}.png").convert("RGBA")
+    grade_image.thumbnail((IMAGE_HEIGHT // 8, IMAGE_HEIGHT // 8))
+    font = ImageFont.truetype(TORUS_SEMIBOLD, 48)
+    padding = 10
+    count_text = f"{count:,}"
+    _, _, count_width, count_height = font.getbbox(count_text)
+
+    width = max(count_width, grade_image.width)
+    height = count_height + grade_image.height + padding
+
+    count_image = Image.new("RGBA", (width, height))
+    count_draw = ImageDraw.Draw(count_image)
+
+    count_image.alpha_composite(grade_image, ((width - grade_image.width) // 2, 0))
+
+    x = width // 2
+    y = grade_image.height + padding
+
+    count_draw.text((x, y), count_text, font=font, fill="white", anchor="mt")
+
+    return count_image
+
+
+def draw_grades(user_data):
+    grades = [
+        draw_grade("XH", user_data["grade_xh_count"]),
+        draw_grade("X", user_data["grade_x_count"]),
+        draw_grade("SH", user_data["grade_sh_count"]),
+        draw_grade("S", user_data["grade_s_count"]),
+        draw_grade("A", user_data["grade_a_count"]),
+        draw_grade("B", user_data["grade_b_count"]),
+        draw_grade("C", user_data["grade_c_count"]),
+        draw_grade("D", user_data["grade_d_count"]),
+    ]
+
+    draw_stats_row(grades, 320)
+
+
 def draw_header(user_data, avatar_data):
     avatar_color = get_image_color(avatar_data)
     draw_header_background(avatar_color, user_data["cover_url"])
@@ -552,6 +591,7 @@ def draw_header(user_data, avatar_data):
 def draw_body(user_data):
     draw_ranks(user_data)
     draw_stats(user_data)
+    draw_grades(user_data)
 
 
 # Card design is using flyte's Player Card design as a base and builds on top of it
