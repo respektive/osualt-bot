@@ -102,10 +102,9 @@ def draw_avatar(image, avatar_data):
     avatar_with_rounded_corners = Image.new("RGBA", avatar_size, (0, 0, 0, 0))
     avatar_with_rounded_corners.paste(avatar_image, mask=mask)
 
-    image.paste(
+    image.alpha_composite(
         avatar_with_rounded_corners,
         (avatar_x, avatar_y),
-        mask=avatar_with_rounded_corners,
     )
 
 
