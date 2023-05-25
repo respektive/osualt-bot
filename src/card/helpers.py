@@ -76,9 +76,16 @@ def adjust_color_saturation_and_brightness(rgb_color, saturation, brightness):
 
 
 def get_image_color(image_data):
-    image = Image.open(io.BytesIO(image_data)).convert("RGB")
+    osu_pink = (255, 0, 115)
+    try:
+        image = Image.open(io.BytesIO(image_data)).convert("RGB")
+    except (OSError, IOError):
+        return adjust_color_saturation_and_brightness(osu_pink, 0.45, 0.3)
 
     pixels = np.array(image).reshape(-1, 3)
+
+    if len(pixels) < 5:
+        return adjust_color_saturation_and_brightness(osu_pink, 0.45, 0.3)
 
     kmeans = KMeans(n_init=10, n_clusters=5)
     kmeans.fit(pixels)
@@ -90,7 +97,7 @@ def get_image_color(image_data):
     dominant_color = tuple(map(int, cluster_centers[np.argmax(counts)]))
 
     if dominant_color == (255, 255, 255) or dominant_color == (0, 0, 0):
-        dominant_color = (255, 0, 115)  # osu! Pink
+        dominant_color = osu_pink
 
     adjusted_color = adjust_color_saturation_and_brightness(dominant_color, 0.45, 0.3)
 
