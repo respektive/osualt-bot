@@ -68,10 +68,10 @@ ADVANCED_PARAMS = """```ahk
 ```"""
 
 COMMAND_FLAGS = {
-    "global": { "name": "Global Parameters", "value": GLOBAL_PARAMS },
-    "profile": { "name": "Profile Parameters", "value": PROFILE_PARAMS },
-    "advanced": { "name": "Advanced Parameters", "value": ADVANCED_PARAMS },
-    "beatmap": { "name": "Beatmap Parameters", "value": BEATMAP_PARAMS },
+    "global": {"name": "Global Parameters", "value": GLOBAL_PARAMS},
+    "profile": {"name": "Profile Parameters", "value": PROFILE_PARAMS},
+    "advanced": {"name": "Advanced Parameters", "value": ADVANCED_PARAMS},
+    "beatmap": {"name": "Beatmap Parameters", "value": BEATMAP_PARAMS},
 }
 
 COG_FLAGS = {
@@ -140,5 +140,9 @@ your user_id. username won't work.
 -type: List to fetch. neverbeenssed, neverbeenfced, neverbeendted, scores, scoresimple, beatmaps, beatmapsimple, fc_count, top_score, top_score_nomod, top_score_hidden, registered, nomodnumberones, hiddennumberones, numberones
 -name: set a custom filename
 -u: specify a user
+```""",
+    "card": """```ahk
+-u: specify a user
+-loved: true, to include loved maps in Clears, Completion and Grades
 ```""",
 }
