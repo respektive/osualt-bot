@@ -6,6 +6,14 @@ from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import io
 import numpy as np
 import requests
+from card.constants import (
+    DEFAULT_COVER,
+    IMAGE_HEIGHT,
+    IMAGE_WIDTH,
+    TORUS_BOLD,
+    TORUS_REGULAR,
+    TORUS_SEMIBOLD,
+)
 from card.helpers import (
     get_image_color,
     get_rank_tier,
@@ -13,13 +21,6 @@ from card.helpers import (
     convert_country_code_to_unicode,
     fit_image_to_aspect_ratio,
 )
-
-IMAGE_HEIGHT = 940
-IMAGE_WIDTH = 1500
-TORUS_REGULAR = "src/resources/fonts/torus/Torus-Regular.otf"
-TORUS_BOLD = "src/resources/fonts/torus/Torus-Bold.otf"
-TORUS_SEMIBOLD = "src/resources/fonts/torus/Torus-SemiBold.otf"
-DEFAULT_COVER = "src/resources/images/default_cover.png"
 
 image = Image.new("RGBA", (IMAGE_WIDTH, IMAGE_HEIGHT), (0, 0, 0, 0))
 draw = ImageDraw.Draw(image)

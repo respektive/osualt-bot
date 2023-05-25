@@ -3,10 +3,7 @@ import io
 from colorsys import rgb_to_hsv, hsv_to_rgb
 import numpy as np
 from sklearn.cluster import KMeans
-
-TORUS_REGULAR = "src/resources/fonts/torus/Torus-Regular.otf"
-TORUS_BOLD = "src/resources/fonts/torus/Torus-Bold.otf"
-TORUS_SEMIBOLD = "src/resources/fonts/torus/Torus-SemiBold.otf"
+from card.constants import TORUS_BOLD, TORUS_REGULAR, TORUS_SEMIBOLD
 
 
 # Colors taken from flyte's Tier Colours Design
