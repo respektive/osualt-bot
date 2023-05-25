@@ -330,13 +330,13 @@ def draw_join_date(join_date):
     )
 
 
-def draw_global_rank(global_rank):
+def draw_score_rank(score_rank):
     header_font_size = 48
     rank_font_size = 96
-    tier = get_rank_tier(global_rank)
+    tier = get_rank_tier(score_rank)
     colors = tier["colors"]
-    header_text = "Global Rank"
-    rank_text = f"#{global_rank:,}" if global_rank and global_rank > 0 else "-"
+    header_text = "Score Rank"
+    rank_text = f"#{score_rank:,}" if score_rank and score_rank > 0 else "-"
 
     font_header = ImageFont.truetype(TORUS_SEMIBOLD, header_font_size)
     font_rank = ImageFont.truetype(tier["font_path"], rank_font_size)
@@ -409,9 +409,9 @@ def draw_generic_rank(text, rank):
 
 def draw_ranks(user_data):
     ranks = [
-        draw_global_rank(user_data["global_rank"]),
+        draw_score_rank(user_data["score_rank"]),
+        draw_generic_rank("Global Rank", user_data["global_rank"]),
         draw_generic_rank("Country Rank", user_data["country_rank"]),
-        draw_generic_rank("Score Rank", user_data["score_rank"]),
     ]
 
     total_ranks_width = sum(rank.width for rank in ranks)
