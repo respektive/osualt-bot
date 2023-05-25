@@ -427,6 +427,7 @@ def draw_ranks(user_data):
 
 
 def draw_stat(header, value):
+    height = 128
     header_font = ImageFont.truetype(TORUS_SEMIBOLD, 44)
     stat_font = ImageFont.truetype(TORUS_REGULAR, 60)
 
@@ -439,17 +440,56 @@ def draw_stat(header, value):
     else:
         stat_text = f"{value:,}"
 
+    if not header in ("Ranked Score", "Total Score"):
+        _, _, header_width, _ = header_font.getbbox(header)
+        _, _, value_width, _ = stat_font.getbbox(stat_text)
+
+        width = max(header_width, value_width)
+
+        stat_image = Image.new("RGBA", (width, height))
+        stat_draw = ImageDraw.Draw(stat_image)
+
+        stat_draw.text((0, 0), header, font=header_font, fill="white")
+        stat_draw.text((0, 112), stat_text, font=stat_font, fill="#DBF0E9", anchor="ls")
+
+        return stat_image
+
+    numbers = stat_text.split(",")
+    score_font_size = 60
     _, _, header_width, _ = header_font.getbbox(header)
-    _, _, value_width, _ = stat_font.getbbox(stat_text)
-
-    width = max(header_width, value_width)
-    height = 128
-
-    stat_image = Image.new("RGBA", (width, height))
+    initial_width = max(
+        header_width,
+        (
+            sum(len(number) for number in numbers) * score_font_size
+            + (len(numbers) - 1) * score_font_size // 2
+        ),
+    )
+    stat_image = Image.new("RGBA", (initial_width, height))
     stat_draw = ImageDraw.Draw(stat_image)
 
     stat_draw.text((0, 0), header, font=header_font, fill="white")
-    stat_draw.text((0, 52), stat_text, font=stat_font, fill="#DBF0E9")
+
+    x = 0
+    y = 112
+    for i, number in enumerate(numbers):
+        font = ImageFont.truetype(TORUS_REGULAR, score_font_size)
+        _, _, number_width, _ = font.getbbox(number)
+
+        stat_draw.text((x, y), number, font=font, fill="#DBF0E9", anchor="ls")
+
+        comma_width = 0
+        if i < len(numbers) - 1:
+            _, _, comma_width, _ = font.getbbox(",")
+            stat_draw.text(
+                (x + number_width, y), ",", font=font, fill="#DBF0E9", anchor="ls"
+            )
+
+        score_font_size -= 4
+
+        x += number_width + comma_width
+
+    width = max(header_width, x)
+    stat_image = stat_image.crop((0, 0, width, height))
 
     return stat_image
 
