@@ -44,15 +44,22 @@ async def get_user_data(user_id, kwargs):
                 ranked_score,
                 RANK() OVER (ORDER BY ranked_score DESC) AS score_rank
             FROM users2
+        ), medal_count_cte AS (
+            SELECT
+                COUNT(*) AS medal_count
+            FROM user_achievements
+            WHERE user_id = {user_id}
         )
         SELECT
             users2.*,
             beatmaps_count_cte.*,
             scores_count_cte.*,
+            medal_count_cte.medal_count,
             ranked_score_rank_cte.score_rank
         FROM users2
         CROSS JOIN beatmaps_count_cte
         CROSS JOIN scores_count_cte
+        CROSS JOIN medal_count_cte
         JOIN ranked_score_rank_cte ON ranked_score_rank_cte.user_id = users2.user_id
         WHERE users2.user_id = {user_id}"""
     )
