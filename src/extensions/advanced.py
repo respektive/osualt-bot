@@ -94,6 +94,12 @@ class Advanced(commands.Cog):
             elif kwargs["-o"] == "score" or kwargs["-o"] == "scoer":
                 await check_tables(ctx, "sum(scores.score)", "scores", kwargs, kwargs["-o"].upper())
 
+            elif kwargs["-o"] == "missingscore":
+                await check_tables(ctx, "sum(top_score.top_score - scores.score)", "scores", kwargs, "Missing Score")
+
+            elif kwargs["-o"] == "missingnomodscore":
+                await check_tables(ctx, "sum(top_score_nomod.top_score_nomod - scores.score)", "scores", kwargs, "Missing Nomod Score")
+
             elif kwargs["-o"] == "scorev0":
                 await check_tables(ctx, "MAX(scores.score)", "scores", kwargs, "Scorev0")
                 

@@ -136,10 +136,10 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
     if di.get("-leastssed") and di["-leastssed"] == "true":
         base = base + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
 
-    if di.get("-score") or di.get("-score-min") or di.get("-score-max") or di.get("-topscore") or di.get("-topscore-min") or di.get("-topscore-max")  or di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max"):
+    if di.get("-o") == "missingscore" or di.get("-score") or di.get("-score-min") or di.get("-score-max") or di.get("-topscore") or di.get("-topscore-min") or di.get("-topscore-max")  or di.get("-scorepersecond") or di.get("-scorepersecond-min") or di.get("-scorepersecond-max"):
         base = base + " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"
 
-    if di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max") or di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max"):
+    if di.get("-o") == "missingnomodscore" or di.get("-topscorenomod") or di.get("-topscorenomod-min") or di.get("-topscorenomod-max") or di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min") or di.get("-nomodscorepersecond-max"):
         base = base + " inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id"
 
     if di.get("-o") and di["-o"] == "lazerscore":
@@ -156,7 +156,7 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
 
     options = ["completion", "%", "length_completion", "length", "score", "scoer", "lazerscore", "lazerscore_nomod", 
                 "lazerscore_standard", "lazerscore_standard_nomod", "lazerscore_doublesliders", "totalpp",
-                "pp", "weighed_pp", "100", "50", "miss", "x", "sets", "mapsets", "agedscore", "scorev0"]
+                "pp", "weighed_pp", "100", "50", "miss", "x", "sets", "mapsets", "agedscore", "scorev0", "missingscore", "missingnomodscore"]
 
     if not di.get("-loved"):
         di["-loved"] = "false"
