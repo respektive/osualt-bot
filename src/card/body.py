@@ -12,13 +12,12 @@ def draw_body(image, user_data):
     draw_grades(image, user_data)
 
 
-def draw_score_rank(score_rank):
+def draw_fancy_rank(header_text, rank):
     header_font_size = 48
     rank_font_size = 96
-    tier = get_rank_tier(score_rank)
+    tier = get_rank_tier(rank)
     colors = tier["colors"]
-    header_text = "Score Rank"
-    rank_text = f"#{score_rank:,}" if score_rank and score_rank > 0 else "-"
+    rank_text = f"#{rank:,}" if rank and rank > 0 else "-"
 
     font_header = ImageFont.truetype(TORUS_SEMIBOLD, header_font_size)
     font_rank = ImageFont.truetype(tier["font_path"], rank_font_size)
@@ -90,9 +89,9 @@ def draw_generic_rank(text, rank):
 
 def draw_ranks(image, user_data):
     ranks = [
-        draw_score_rank(user_data["score_rank"]),
-        draw_generic_rank("Global Rank", user_data["global_rank"]),
-        draw_generic_rank("Country Rank", user_data["country_rank"]),
+        draw_fancy_rank("Score Rank", user_data["score_rank"]),
+        draw_fancy_rank("Global Rank", user_data["global_rank"]),
+        draw_fancy_rank("Country Rank", user_data["country_rank"]),
     ]
 
     total_ranks_width = sum(rank.width for rank in ranks)
