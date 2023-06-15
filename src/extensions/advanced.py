@@ -27,7 +27,7 @@ class Advanced(commands.Cog):
 
     @commands.command()
     async def missingscore(self, ctx, *args):
-        """Returns an ordered list of plays based on how much score you're msising compared to the #1 play on the map."""
+        """Returns an ordered list of plays based on how much score you're missing compared to the #1 play on the map."""
         kwargs = get_args(args)
         kwargs["discord_id"] = ctx.message.author.id
         user_id = await get_user_id(ctx, kwargs)
