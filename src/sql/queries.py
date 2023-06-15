@@ -671,8 +671,8 @@ async def get_completion(ctx, type, di):
         query = f"""
         SELECT
             {type}_range,
-        {"SUM(scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
-        {"SUM(scores.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(scores.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else f"COUNT(DISTINCT {type}_ranges.beatmap_id) AS beatmap_count")}
+        {"SUM(DISTINCT scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
+        {"SUM(DISTINCT scores.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(DISTINCT scores.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else f"COUNT(DISTINCT {type}_ranges.beatmap_id) AS beatmap_count")}
         FROM (
             SELECT beatmaps.beatmap_id,
             CASE
@@ -686,7 +686,7 @@ async def get_completion(ctx, type, di):
                 range_conditions.append(f"WHEN {range_arg} = {rng} THEN '{rng}'")
             else:
                 start, end = str(rng).split("-")
-                range_conditions.append(f"WHEN {range_arg} >= {start} AND {range_arg} < {decimal.Decimal(end) - decimal.Decimal('0.005') if type == 'stars' else end} THEN '{rng}'")
+                range_conditions.append(f"WHEN {range_arg} >= {decimal.Decimal(start) - decimal.Decimal('0.005') if type == 'stars' else start} AND {range_arg} < {decimal.Decimal(end) - decimal.Decimal('0.005') if type == 'stars' else end} THEN '{rng}'")
         
         query += "\n".join(range_conditions)
         query += f"""
@@ -700,7 +700,7 @@ async def get_completion(ctx, type, di):
             {"top_score_nomod.top_score_nomod" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else "top_score.top_score"}
             FROM beatmaps
             LEFT JOIN beatmap_packs ON beatmap_packs.beatmap_id = beatmaps.beatmap_id
-            INNER JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
+            {"LEFT" if di.get("-o") in ("score", "nomodscore") else "INNER"} JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
             {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
             {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
             {build_where_clause(di)}
@@ -825,8 +825,8 @@ async def get_pack_completion(ctx, di):
     query = f"""
     SELECT
     pack_id,
-    {"SUM(scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
-    {"SUM(top_score.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(top_score_nomod.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else "COUNT(DISTINCT beatmaps.beatmap_id) AS beatmap_count")}
+    {"SUM(DISTINCT scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
+    {"SUM(DISTINCT top_score.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(DISTINCT top_score_nomod.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else "COUNT(DISTINCT beatmaps.beatmap_id) AS beatmap_count")}
     FROM 
     beatmap_packs 
     LEFT JOIN beatmaps ON beatmaps.beatmap_id = beatmap_packs.beatmap_id
@@ -834,7 +834,7 @@ async def get_pack_completion(ctx, di):
         SELECT DISTINCT beatmaps.beatmap_id
         FROM beatmaps
         INNER JOIN beatmap_packs ON beatmap_packs.beatmap_id = beatmaps.beatmap_id
-        INNER JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
+        {"LEFT" if di.get("-o") in ("score", "nomodscore") else "INNER"} JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
         {"inner join (select beatmap_id, top_score_nomod from top_score_nomod) top_score_nomod on beatmaps.beatmap_id = top_score_nomod.beatmap_id" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else " inner join (select beatmap_id, top_score from top_score) top_score on beatmaps.beatmap_id = top_score.beatmap_id"}
         {" inner join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id" if di.get("-modded") == "true" else ""}
         {build_where_clause(di)}
