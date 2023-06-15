@@ -37,6 +37,12 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         await get_profile_leaderboard(ctx, "scores_first_count", "First Places", **kwargs)
 
+    @commands.command(aliases=['favorites', 'favs'])
+    async def favourites(self, ctx, *args):
+        """Favourties leaderboard"""
+        kwargs = get_args(args)
+        await get_profile_leaderboard(ctx, "favourite_beatmapset_count", "Favourite Beatmaps", **kwargs)
+
     @commands.command()
     async def followers(self, ctx, *args):
         """Global followers leaderboard"""
