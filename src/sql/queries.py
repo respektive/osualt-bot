@@ -574,7 +574,7 @@ async def get_completion(ctx, type, di):
     # Parse args
     default_size = 1
     length = max(int(di.get("-l", 10)), 1)
-    group_size = max(float(di.get("-g", default_size)), 0.1)
+    group_size = max(float(di.get("-g", default_size)), 0.01)
     page = max(int(di.get("-p", 1)), 1)
     di["-p"] = page
     if not "-g" in di and not "-l" in di:
