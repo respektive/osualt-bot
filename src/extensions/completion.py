@@ -66,6 +66,12 @@ class Completion(commands.Cog):
         kwargs = get_args(args)
         await get_completion(ctx, "monthly", kwargs)
 
+    @commands.command(aliases=["dc"])
+    async def daily_completion(self, ctx, *args):
+        """Daily completion board for a single user"""
+        kwargs = get_args(args)
+        await get_completion(ctx, "daily", kwargs)
+
     @commands.command(aliases=["packs_completion", "pac"])
     async def pack_completion(self, ctx, *args):
         """Pack completion board for a single user"""

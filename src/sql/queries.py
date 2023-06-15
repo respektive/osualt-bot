@@ -659,6 +659,24 @@ async def get_completion(ctx, type, di):
         title = "Monthly Completion"
         range_arg = "DATE_PART('month', approved_date)"
         prefix = ""
+    elif type == "daily":
+        now = datetime.datetime.now()
+        if '-y' in di:
+            di["-year"] = di["-y"]
+        if not '-year' in di:
+            di["-year"] = now.year
+        if not "-month" in di:
+            di["-month"] = now.month
+
+        year = normalize_year(int(di["-year"]))
+        month = int(di["-month"])
+
+        last_day = now.day if year == now.year and month == now.month else calendar.monthrange(year, month)[1]
+        ranges = range(1, last_day + 1)
+        title = f"Daily Completion - {calendar.month_name[month]} {year}"
+        range_arg = "DATE_PART('day', approved_date)"
+        prefix = ""
+
 
     query_start_time = time.time()
 
@@ -680,9 +698,7 @@ async def get_completion(ctx, type, di):
 
         range_conditions = []
         for rng in ranges:
-            if type == "yearly":
-                range_conditions.append(f"WHEN {range_arg} = {rng} THEN '{rng}'")
-            elif type == "monthly":
+            if type in ("yearly", "monthly", "daily"):
                 range_conditions.append(f"WHEN {range_arg} = {rng} THEN '{rng}'")
             else:
                 start, end = str(rng).split("-")
