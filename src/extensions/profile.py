@@ -256,7 +256,7 @@ class Profile(commands.Cog):
 
     @commands.command(aliases=['medals'])
     async def most_medals(self, ctx, *args):
-        """Most Badges"""
+        """Most Medals"""
         kwargs = get_args(args)
         await check_array_stats(ctx, "count(*)", "user_achievements", "users2.user_id", kwargs, "Medal Count")
 
