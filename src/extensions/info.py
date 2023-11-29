@@ -238,12 +238,12 @@ class Info(commands.Cog):
         )
         embed.add_field(
             name="GitHub",
-            value="The Discord portion of the bot is open-source and can be found on GitHub [here](https://github.com/respektive/osualt-bot).\nThe tracker is made by Ciuriya#0037 and can be found on GitHub [here](https://github.com/Ciuriya/osualt-play-tracker).\nThe backend that is fetching all the stats and scores is currently not open-source.",
+            value="The Discord portion of the bot is open-source and can be found on GitHub [here](https://github.com/respektive/osualt-bot).\nThe tracker is made by <@91302128328392704> and can be found on GitHub [here](https://github.com/Ciuriya/osualt-play-tracker).\nThe backend that is fetching all the stats and scores is currently not open-source.",
             inline=False,
         )
         embed.add_field(
             name="Scores inspector",
-            value="The scores inspector is made by Amayakase#9198 and has access to the bots database and generates statistics and graphs from it. It can be found [here](https://darkchii.nl/score/).",
+            value="The scores inspector is made by <@232878037337636865> and has access to the bots database and generates statistics and graphs from it. It can be found [here](https://darkchii.nl/score/).",
             inline=False,
         )
 
