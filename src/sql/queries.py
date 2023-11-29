@@ -150,7 +150,7 @@ async def check_mappers(ctx, stat, di):
     # format the base level data
     base = f"select user_id, count(distinct {stat}) as stat from beatmaps inner join users2 on user_id = creator_id"
     base = base + build_where_clause(di)
-    base = base + " group by username"
+    base = base + " group by username, user_id"
 
     # build and execute the leaderboard creating query
     query = await build_leaderboard(ctx, base, di)
