@@ -708,7 +708,7 @@ async def get_completion(ctx, type, di):
         query += f"""
                 END AS {type}_range
             FROM beatmaps
-            WHERE mode = 0 AND approved IN (1, 2{', 4' if "-loved" in di and di["-loved"] == 'true' else ''})
+            WHERE mode = 0 AND approved IN (1, 2{', 4' if "-loved" in di and di["-loved"] == 'true' or di.get("-a") else ''})
             {f"AND DATE_PART('year', approved_date) = {normalize_year(int(di.get('-year')))}" if type == "monthly" else ""}
             ) AS {type}_ranges
         LEFT JOIN (
