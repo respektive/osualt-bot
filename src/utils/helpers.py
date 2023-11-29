@@ -487,8 +487,13 @@ def build_where_clause(di, table=None):
         else:
             where += " and user_id = '" + str(di["-user"]) + "'"
     if di.get("-country") or di.get("-c"):
-        country_code = di.get("-country") or di.get("-c")
-        where += f" and LOWER(country_code) = '{country_code.lower()}'"
+        countries = di.get("-country") or di.get("-c")
+        countries = countries.replace("'", "")
+        countries = countries.split(",")
+        for i, user in enumerate(countries):
+            countries[i] = f"'{user.lower()}'"
+        countries = ",".join(countries)
+        where += f" and LOWER(country_code) IN ({countries})"
     if di.get("-rankedscore") or di.get("-rankedscore-min"):
         if di.get("-rankedscore-min"):
             di["-rankedscore"] = di["-rankedscore-min"]
