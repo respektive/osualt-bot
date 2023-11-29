@@ -101,7 +101,7 @@ def check_date_string(date_string):
         return (now - datetime.timedelta(days=1)).date().strftime(date_format)
     else:
         date = dateutil.parser.parse(date_string, yearfirst=True)
-        return date.isoformat()
+        return date.date().strftime(date_format)
 
 
 def get_mods_enum(mods, diff=False):
