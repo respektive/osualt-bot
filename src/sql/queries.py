@@ -1434,12 +1434,13 @@ async def get_pack_completion(ctx, di):
     SELECT
     pack_id,
     {"SUM(DISTINCT scores.score) AS scores_count," if di.get("-o") in ("score", "nomodscore") else "COUNT(DISTINCT scores.beatmap_id) AS scores_count,"}
-    {"SUM(DISTINCT top_score.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(DISTINCT top_score_nomod.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else "COUNT(DISTINCT beatmaps.beatmap_id) AS beatmap_count")}
+    {"SUM(DISTINCT scores.top_score) AS beatmap_count" if di.get("-o") == "score" else ("SUM(DISTINCT scores.top_score_nomod) AS beatmap_count" if di.get("-o") == "nomodscore" else "COUNT(DISTINCT beatmaps.beatmap_id) AS beatmap_count")}
     FROM 
     beatmap_packs 
     LEFT JOIN beatmaps ON beatmaps.beatmap_id = beatmap_packs.beatmap_id
     LEFT JOIN (
-        SELECT DISTINCT beatmaps.beatmap_id
+        SELECT beatmaps.beatmap_id, scores.score,
+        {"top_score_nomod.top_score_nomod" if (di.get("-o") and di["-o"] == "nomodscore") or (di.get("-topscorenomod") or di.get("-topscorenomod-max")) else "top_score.top_score"}
         FROM beatmaps
         INNER JOIN beatmap_packs ON beatmap_packs.beatmap_id = beatmaps.beatmap_id
         {"LEFT" if di.get("-o") in ("score", "nomodscore") else "INNER"} JOIN scores ON scores.beatmap_id = beatmaps.beatmap_id AND scores.user_id = {user_id}
