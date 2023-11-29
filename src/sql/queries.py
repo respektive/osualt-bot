@@ -1214,7 +1214,7 @@ async def get_completion(ctx, type, di):
         if not "-year" in di:
             di["-year"] = datetime.datetime.now().year
         ranges = range(1, 13)
-        title = "Monthly Completion"
+        title = f"Monthly Completion {di['-year']}"
         range_arg = "DATE_PART('month', approved_date)"
         prefix = ""
     elif type == "daily":
