@@ -19,7 +19,7 @@ class Beatmaps(commands.Cog):
         answer = await check_beatmaps(ctx, kwargs, None, False)
         await ctx.reply(answer)
 
-    @commands.command(aliases=["bs", "bsets"])
+    @commands.command(aliases=["bs", "bsets", "mapsets"])
     async def beatmapsets(self, ctx, *args):
         """Returns statistics of beatmap sets"""
         kwargs = get_args(args)
