@@ -1,6 +1,11 @@
 from discord.ext import commands
 from utils.helpers import get_args
-from sql.queries import get_profile_leaderboard, get_mapper_leaderboard, check_array_stats
+from sql.queries import (
+    get_profile_leaderboard,
+    get_mapper_leaderboard,
+    check_array_stats,
+)
+
 
 class Profile(commands.Cog):
     def __init__(self, bot):
@@ -23,7 +28,12 @@ class Profile(commands.Cog):
     async def clears(self, ctx, *args):
         """Clears leaderboard"""
         kwargs = get_args(args)
-        await get_profile_leaderboard(ctx, "a_count + s_count + sh_count + ss_count + ssh_count", "Clears", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "a_count + s_count + sh_count + ss_count + ssh_count",
+            "Clears",
+            **kwargs,
+        )
 
     @commands.command()
     async def comments(self, ctx, *args):
@@ -31,17 +41,21 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         await get_profile_leaderboard(ctx, "comments_count", "Comments", **kwargs)
 
-    @commands.command(aliases=['firstplaces', 'first_places', '#1s'])
+    @commands.command(aliases=["firstplaces", "first_places", "#1s"])
     async def firsts(self, ctx, *args):
         """Global #1s leaderboard"""
         kwargs = get_args(args)
-        await get_profile_leaderboard(ctx, "scores_first_count", "First Places", **kwargs)
+        await get_profile_leaderboard(
+            ctx, "scores_first_count", "First Places", **kwargs
+        )
 
-    @commands.command(aliases=['favorites', 'favs'])
+    @commands.command(aliases=["favorites", "favs"])
     async def favourites(self, ctx, *args):
         """Favourties leaderboard"""
         kwargs = get_args(args)
-        await get_profile_leaderboard(ctx, "favourite_beatmapset_count", "Favourite Beatmaps", **kwargs)
+        await get_profile_leaderboard(
+            ctx, "favourite_beatmapset_count", "Favourite Beatmaps", **kwargs
+        )
 
     @commands.command()
     async def followers(self, ctx, *args):
@@ -74,7 +88,9 @@ class Profile(commands.Cog):
         kwargs["-float"] = "true"
         if not kwargs.get("-playcount-min"):
             kwargs["-playcount-min"] = 1
-        await get_profile_leaderboard(ctx, "(total_hits::float / NULLIF(playcount,0))", "Hits per Play", **kwargs)
+        await get_profile_leaderboard(
+            ctx, "(total_hits::float / NULLIF(playcount,0))", "Hits per Play", **kwargs
+        )
 
     @commands.command(aliases=["join_date"])
     async def joined(self, ctx, *args):
@@ -93,18 +109,25 @@ class Profile(commands.Cog):
             kwargs["-totalscore"] = 10_000_000
         await get_profile_leaderboard(ctx, "level", "Level", **kwargs)
 
-    @commands.command(aliases=['mapping_followers'])
+    @commands.command(aliases=["mapping_followers"])
     async def mappingfollowers(self, ctx, *args):
         """Global mapping followers leaderboard"""
         kwargs = get_args(args)
-        await get_profile_leaderboard(ctx, "mapping_follower_count", "Mapping Followers", **kwargs)
+        await get_profile_leaderboard(
+            ctx, "mapping_follower_count", "Mapping Followers", **kwargs
+        )
 
     @commands.command(aliases=["passrate"])
     async def passratio(self, ctx, *args):
         """Pass Ratio leaderboard"""
         kwargs = get_args(args)
         kwargs["-o"] = "completion"
-        await get_profile_leaderboard(ctx, "round(cast(greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1)::float / playcount::float * 100 as numeric), 3)", "Pass Ratio", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "round(cast(greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1)::float / playcount::float * 100 as numeric), 3)",
+            "Pass Ratio",
+            **kwargs,
+        )
 
     @commands.command(aliases=["pc"])
     async def playcount(self, ctx, *args):
@@ -131,7 +154,12 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         if not kwargs.get("-rankedscore"):
             kwargs["-rankedscore"] = 100_000_000
-        await get_profile_leaderboard(ctx, "cast(ranked_score / greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1) as float)", "Ranked Score per Clear", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "cast(ranked_score / greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1) as float)",
+            "Ranked Score per Clear",
+            **kwargs,
+        )
 
     @commands.command()
     async def rankedscoreperhit(self, ctx, *args):
@@ -139,7 +167,12 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         if not kwargs.get("-rankedscore"):
             kwargs["-rankedscore"] = 100_000_000
-        await get_profile_leaderboard(ctx, "cast(ranked_score / greatest((total_hits), 1) as int)", "Ranked Score per Hit", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "cast(ranked_score / greatest((total_hits), 1) as int)",
+            "Ranked Score per Hit",
+            **kwargs,
+        )
 
     @commands.command(aliases=["scoreperplay"])
     async def rankedscoreperplay(self, ctx, *args):
@@ -147,13 +180,20 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         if not kwargs.get("-rankedscore"):
             kwargs["-rankedscore"] = 100_000_000
-        await get_profile_leaderboard(ctx, "cast(ranked_score / greatest((playcount), 1) as int)", "Ranked Score per Play", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "cast(ranked_score / greatest((playcount), 1) as int)",
+            "Ranked Score per Play",
+            **kwargs,
+        )
 
     @commands.command()
     async def replayswatched(self, ctx, *args):
         """Replays watched leaderboard"""
         kwargs = get_args(args)
-        await get_profile_leaderboard(ctx, "replays_watched", "Replays watched", **kwargs)
+        await get_profile_leaderboard(
+            ctx, "replays_watched", "Replays watched", **kwargs
+        )
 
     @commands.command()
     async def scoreratio(self, ctx, *args):
@@ -162,7 +202,12 @@ class Profile(commands.Cog):
         kwargs["-o"] = "completion"
         if not kwargs.get("-rankedscore"):
             kwargs["-rankedscore"] = 100_000_000
-        await get_profile_leaderboard(ctx, "round((cast(ranked_score::float / GREATEST(total_score, 1)::float * 100 as numeric)),3)", "Score Ratio", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "round((cast(ranked_score::float / GREATEST(total_score, 1)::float * 100 as numeric)),3)",
+            "Score Ratio",
+            **kwargs,
+        )
 
     @commands.command()
     async def silver_s(self, ctx, *args):
@@ -194,7 +239,12 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         if not kwargs.get("-totalscore"):
             kwargs["-totalscore"] = 100_000_000
-        await get_profile_leaderboard(ctx, "cast(total_score / greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1) as float)", "Total Score per Clear", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "cast(total_score / greatest((ssh_count + sh_count + s_count + ss_count + a_count), 1) as float)",
+            "Total Score per Clear",
+            **kwargs,
+        )
 
     @commands.command()
     async def totalscoreperhit(self, ctx, *args):
@@ -202,7 +252,12 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         if not kwargs.get("-totalscore"):
             kwargs["-totalscore"] = 100_000_000
-        await get_profile_leaderboard(ctx, "cast(total_score / greatest((total_hits), 1) as int)", "Total Score per Hit", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "cast(total_score / greatest((total_hits), 1) as int)",
+            "Total Score per Hit",
+            **kwargs,
+        )
 
     @commands.command()
     async def totalscoreperplay(self, ctx, *args):
@@ -210,7 +265,12 @@ class Profile(commands.Cog):
         kwargs = get_args(args)
         if not kwargs.get("-totalscore"):
             kwargs["-totalscore"] = 100_000_000
-        await get_profile_leaderboard(ctx, "cast(total_score / greatest((playcount), 1) as int)", "Total Score per Play", **kwargs)
+        await get_profile_leaderboard(
+            ctx,
+            "cast(total_score / greatest((playcount), 1) as int)",
+            "Total Score per Play",
+            **kwargs,
+        )
 
     @commands.command()
     async def total_s(self, ctx, *args):
@@ -240,31 +300,62 @@ class Profile(commands.Cog):
     async def highest_replays(self, ctx, *args):
         """Highest monthly replays"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "max(count)", "user_replay_counts", "users2.user_id, start_date", kwargs, "Most Replays watched")
+        await check_array_stats(
+            ctx,
+            "max(count)",
+            "user_replay_counts",
+            "users2.user_id, start_date",
+            kwargs,
+            "Most Replays watched",
+        )
 
     @commands.command()
     async def highest_playcount(self, ctx, *args):
         """Highest monthly Play Count"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "max(count)", "user_playcounts", "users2.user_id, start_date", kwargs, "Highest Play Count")
+        await check_array_stats(
+            ctx,
+            "max(count)",
+            "user_playcounts",
+            "users2.user_id, start_date",
+            kwargs,
+            "Highest Play Count",
+        )
 
-    @commands.command(aliases=['badges'])
+    @commands.command(aliases=["badges"])
     async def most_badges(self, ctx, *args):
         """Most Badges"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "count(*)", "user_badges", "users2.user_id", kwargs, "Most Badges")
+        await check_array_stats(
+            ctx, "count(*)", "user_badges", "users2.user_id", kwargs, "Most Badges"
+        )
 
-    @commands.command(aliases=['medals'])
+    @commands.command(aliases=["medals"])
     async def most_medals(self, ctx, *args):
         """Most Medals"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "count(*)", "user_achievements", "users2.user_id", kwargs, "Medal Count")
+        await check_array_stats(
+            ctx,
+            "count(*)",
+            "user_achievements",
+            "users2.user_id",
+            kwargs,
+            "Medal Count",
+        )
 
     @commands.command()
     async def rarest_medals(self, ctx, *args):
         """Rarest Medals"""
         kwargs = get_args(args)
-        await check_array_stats(ctx, "count(*)", "user_achievements", "achievement_id::text as user_id", kwargs, "Rarest Medals")
+        await check_array_stats(
+            ctx,
+            "count(*)",
+            "user_achievements",
+            "achievement_id::text as user_id",
+            kwargs,
+            "Rarest Medals",
+        )
+
 
 async def setup(bot):
     await bot.add_cog(Profile(bot))

@@ -5,52 +5,50 @@ import json
 import requests
 import dateutil.parser
 
+
 def catbox_upload(file_name, file_path):
     catbox_api = "https://litterbox.catbox.moe/resources/internals/api.php"
-    response = requests.post(catbox_api,
-        data = {
-            "reqtype" : "fileupload",
-            "time": "1h"
-        },
-        files = {
-            "fileToUpload" : (file_name, open(file_path, "rb"))
-        }
+    response = requests.post(
+        catbox_api,
+        data={"reqtype": "fileupload", "time": "1h"},
+        files={"fileToUpload": (file_name, open(file_path, "rb"))},
     )
     return response.text
+
 
 unique_tables = ["unique_ss", "unique_fc", "unique_dt_fc", "first_ss", "first_fc"]
 
 mods_enum = {
-    ''    : 0,
-    'NF'  : 1,
-    'EZ'  : 2,
-    'TD'  : 4,
-    'HD'  : 8,
-    'HR'  : 16,
-    'SD'  : 32,
-    'DT'  : 64,
-    'RX'  : 128,
-    'HT'  : 256,
-    'NC'  : 512,
-    'FL'  : 1024,
-    'AT'  : 2048,
-    'SO'  : 4096,
-    'AP'  : 8192,
-    'PF'  : 16384,
-    '4K'  : 32768,
-    '5K'  : 65536,
-    '6K'  : 131072,
-    '7K'  : 262144,
-    '8K'  : 524288,
-    'FI'  : 1048576,
-    'RD'  : 2097152,
-    'LM'  : 4194304,
-    '9K'  : 16777216,
-    '10K' : 33554432,
-    '1K'  : 67108864,
-    '3K'  : 134217728,
-    '2K'  : 268435456,
-    'V2'  : 536870912
+    "": 0,
+    "NF": 1,
+    "EZ": 2,
+    "TD": 4,
+    "HD": 8,
+    "HR": 16,
+    "SD": 32,
+    "DT": 64,
+    "RX": 128,
+    "HT": 256,
+    "NC": 512,
+    "FL": 1024,
+    "AT": 2048,
+    "SO": 4096,
+    "AP": 8192,
+    "PF": 16384,
+    "4K": 32768,
+    "5K": 65536,
+    "6K": 131072,
+    "7K": 262144,
+    "8K": 524288,
+    "FI": 1048576,
+    "RD": 2097152,
+    "LM": 4194304,
+    "9K": 16777216,
+    "10K": 33554432,
+    "1K": 67108864,
+    "3K": 134217728,
+    "2K": 268435456,
+    "V2": 536870912,
 }
 
 language_ids = {
@@ -68,19 +66,21 @@ language_ids = {
     "italian": 11,
     "russian": 12,
     "polish": 13,
-    "other": 14
+    "other": 14,
 }
 
-diff_mods = ["HR","EZ","DT","HT","FL","HD"]
+diff_mods = ["HR", "EZ", "DT", "HT", "FL", "HD"]
+
 
 def escape_string(s):
     """
     Escapes special characters for use in SQL queries
     """
-    special_chars = {"'": "''", '\\': '\\\\', '\"': ''}
+    special_chars = {"'": "''", "\\": "\\\\", '"': ""}
     for char, escaped in special_chars.items():
         s = s.replace(char, escaped)
     return s
+
 
 def normalize_year(year):
     if year >= 1000 and year <= 9999:  # Four-digit year
@@ -89,6 +89,7 @@ def normalize_year(year):
         return 2000 + year
     else:
         raise ValueError("Invalid year: " + str(year))
+
 
 def check_date_string(date_string):
     # current UTC date and time
@@ -102,6 +103,7 @@ def check_date_string(date_string):
         date = dateutil.parser.parse(date_string, yearfirst=True)
         return date.isoformat()
 
+
 def get_mods_enum(mods, diff=False):
     mods = wrap(mods, 2)
 
@@ -114,53 +116,80 @@ def get_mods_enum(mods, diff=False):
                 filtered_mods.append(mod)
         mods = filtered_mods
 
-    if 'NC' in mods:
-        if 'DT' not in mods:
-            mods.append('DT')
-    if 'PF' in mods:
-        if 'SD' not in mods:
-            mods.append('SD')
+    if "NC" in mods:
+        if "DT" not in mods:
+            mods.append("DT")
+    if "PF" in mods:
+        if "SD" not in mods:
+            mods.append("SD")
     return_value = 0
     for mod in mods:
         if mod.upper() in mods_enum:
             return_value |= mods_enum[mod.upper()]
     return return_value
 
+
 # gives a list of the ranked mods given a peppy number lol
 def get_mods_string(number):
-    """This is the way pyttanko does it. 
-    Just as an actual bitwise instead of list. 
+    """This is the way pyttanko does it.
+    Just as an actual bitwise instead of list.
     Deal with it."""
     number = int(number)
     mod_list = []
 
-    if number == 0:     mod_list.append('NM')
-    if number & 1<<0:   mod_list.append('NF')
-    if number & 1<<1:   mod_list.append('EZ')
-    if number & 1<<2:   mod_list.append('TD')
-    if number & 1<<3:   mod_list.append('HD')
-    if number & 1<<4:   mod_list.append('HR')
-    if number & 1<<5:   mod_list.append('SD')
-    if number & 1<<9:   mod_list.append('NC')
-    elif number & 1<<6: mod_list.append('DT')
-    if number & 1<<7:   mod_list.append('RX')
-    if number & 1<<8:   mod_list.append('HT')
-    if number & 1<<10:  mod_list.append('FL')
-    if number & 1<<12:  mod_list.append('SO')
-    if number & 1<<14:  mod_list.append('PF')
-    if number & 1<<15:  mod_list.append('4 KEY')
-    if number & 1<<16:  mod_list.append('5 KEY')
-    if number & 1<<17:  mod_list.append('6 KEY')
-    if number & 1<<18:  mod_list.append('7 KEY')
-    if number & 1<<19:  mod_list.append('8 KEY')
-    if number & 1<<20:  mod_list.append('FI')
-    if number & 1<<24:  mod_list.append('9 KEY')
-    if number & 1<<25:  mod_list.append('10 KEY')
-    if number & 1<<26:  mod_list.append('1 KEY')
-    if number & 1<<27:  mod_list.append('3 KEY')
-    if number & 1<<28:  mod_list.append('2 KEY')
+    if number == 0:
+        mod_list.append("NM")
+    if number & 1 << 0:
+        mod_list.append("NF")
+    if number & 1 << 1:
+        mod_list.append("EZ")
+    if number & 1 << 2:
+        mod_list.append("TD")
+    if number & 1 << 3:
+        mod_list.append("HD")
+    if number & 1 << 4:
+        mod_list.append("HR")
+    if number & 1 << 5:
+        mod_list.append("SD")
+    if number & 1 << 9:
+        mod_list.append("NC")
+    elif number & 1 << 6:
+        mod_list.append("DT")
+    if number & 1 << 7:
+        mod_list.append("RX")
+    if number & 1 << 8:
+        mod_list.append("HT")
+    if number & 1 << 10:
+        mod_list.append("FL")
+    if number & 1 << 12:
+        mod_list.append("SO")
+    if number & 1 << 14:
+        mod_list.append("PF")
+    if number & 1 << 15:
+        mod_list.append("4 KEY")
+    if number & 1 << 16:
+        mod_list.append("5 KEY")
+    if number & 1 << 17:
+        mod_list.append("6 KEY")
+    if number & 1 << 18:
+        mod_list.append("7 KEY")
+    if number & 1 << 19:
+        mod_list.append("8 KEY")
+    if number & 1 << 20:
+        mod_list.append("FI")
+    if number & 1 << 24:
+        mod_list.append("9 KEY")
+    if number & 1 << 25:
+        mod_list.append("10 KEY")
+    if number & 1 << 26:
+        mod_list.append("1 KEY")
+    if number & 1 << 27:
+        mod_list.append("3 KEY")
+    if number & 1 << 28:
+        mod_list.append("2 KEY")
 
-    return ''.join(mod_list)
+    return "".join(mod_list)
+
 
 def get_args(arg=None):
     args = []
@@ -170,21 +199,22 @@ def get_args(arg=None):
     for i in range(0, len(args) - 1):
         if args[i].startswith("-"):
             key = args[i].lower()
-            value = args[i+1].lower()
+            value = args[i + 1].lower()
             if key == "-u":
                 di[key] = escape_string(value)
             elif " " in value:
                 raise ValueError("spaces are not allowed for argument " + key)
             else:
                 di[key] = value
-    
+
     # replace underscores on numbers
     for key, value in di.items():
-        if value.isdigit() or (value.replace('_', '').isdigit() and '.' not in value):
+        if value.isdigit() or (value.replace("_", "").isdigit() and "." not in value):
             # value is a number with underscores as thousand separators
-            di[key] = value.replace('_', '')  # remove the underscores
-    
+            di[key] = value.replace("_", "")  # remove the underscores
+
     return di
+
 
 def build_where_clause(di, table=None):
     where = ""
@@ -215,9 +245,19 @@ def build_where_clause(di, table=None):
         min_range_value = decimal.Decimal(range_values[0]) - decimal.Decimal("0.005")
         max_range_value = decimal.Decimal(range_values[1]) - decimal.Decimal("0.005")
         if di.get("-modded") and di["-modded"] == "true":
-            where += " and moddedsr.star_rating::numeric >= " + str(min_range_value) + " and moddedsr.star_rating::numeric < " + str(max_range_value)
+            where += (
+                " and moddedsr.star_rating::numeric >= "
+                + str(min_range_value)
+                + " and moddedsr.star_rating::numeric < "
+                + str(max_range_value)
+            )
         else:
-            where += " and stars >= " + str(min_range_value) + " and stars < " + str(max_range_value)
+            where += (
+                " and stars >= "
+                + str(min_range_value)
+                + " and stars < "
+                + str(max_range_value)
+            )
     if di.get("-time"):
         where += " and days >= " + str(di["-time"])
     if di.get("-month") and not (di.get("-year") or di.get("-y")):
@@ -229,8 +269,8 @@ def build_where_clause(di, table=None):
             next_year = year
         else:
             next_month = 1
-            next_year = int(year) + 1 
-        
+            next_year = int(year) + 1
+
         di["-end"] = str(next_year) + "-" + str(next_month) + "-01 00:00:00"
         di["-start"] = str(year) + "-" + str(month) + "-" + str(day) + " 00:00:01"
     elif di.get("-month") and (di.get("-year") or di.get("-y")):
@@ -244,24 +284,46 @@ def build_where_clause(di, table=None):
             next_year = year
         else:
             next_month = 1
-            next_year = int(year) + 1 
+            next_year = int(year) + 1
 
         di["-end"] = str(next_year) + "-" + str(next_month) + "-01 00:00:00"
         di["-start"] = str(year) + "-" + str(month) + "-" + str(day) + " 00:00:01"
     elif di.get("-year") or di.get("-y"):
         if di.get("-y"):
             di["-year"] = di["-y"]
-        where += " and beatmaps.approved_date >= '" + check_date_string(str(di["-year"]) + "-01-01 00:00:00") + "' and beatmaps.approved_date <= '" + check_date_string(str(di["-year"]) + "-12-31 23:59:59") + "'"
+        where += (
+            " and beatmaps.approved_date >= '"
+            + check_date_string(str(di["-year"]) + "-01-01 00:00:00")
+            + "' and beatmaps.approved_date <= '"
+            + check_date_string(str(di["-year"]) + "-12-31 23:59:59")
+            + "'"
+        )
     if di.get("-start"):
-        where += " and beatmaps.approved_date >= '" + check_date_string(str(di["-start"])) + "'"
+        where += (
+            " and beatmaps.approved_date >= '"
+            + check_date_string(str(di["-start"]))
+            + "'"
+        )
     if di.get("-end"):
-        where += " and beatmaps.approved_date < '" + check_date_string(str(di["-end"])) + "'"
+        where += (
+            " and beatmaps.approved_date < '" + check_date_string(str(di["-end"])) + "'"
+        )
     if di.get("-played-start"):
-        where += " and date_played >= '" + check_date_string(str(di["-played-start"])) + "'"
+        where += (
+            " and date_played >= '" + check_date_string(str(di["-played-start"])) + "'"
+        )
     if di.get("-played-end"):
-        where += " and date_played < '" + check_date_string(str(di["-played-end"])) + "'"
+        where += (
+            " and date_played < '" + check_date_string(str(di["-played-end"])) + "'"
+        )
     if di.get("-played-date"):
-        where += " and date_played >= '" + check_date_string(str(di["-played-date"]) + " 00:00:00") + "' and date_played <= '" + check_date_string(str(di["-played-date"]) + " 23:59:59") + "'"
+        where += (
+            " and date_played >= '"
+            + check_date_string(str(di["-played-date"]) + " 00:00:00")
+            + "' and date_played <= '"
+            + check_date_string(str(di["-played-date"]) + " 23:59:59")
+            + "'"
+        )
     if di.get("-b"):
         where += " and beatmaps.beatmap_id in (" + str(di["-b"]) + ")"
     if di.get("-b-min"):
@@ -270,7 +332,12 @@ def build_where_clause(di, table=None):
         where += " and beatmaps.beatmap_id < " + str(di["-b-max"])
     if di.get("-b-range"):
         range = str(di["-b-range"]).split("-")
-        where += " and beatmaps.beatmap_id > " + range[0] + " and beatmaps.beatmap_id < " + range[1]
+        where += (
+            " and beatmaps.beatmap_id > "
+            + range[0]
+            + " and beatmaps.beatmap_id < "
+            + range[1]
+        )
     if di.get("-mode") or di.get("-mode") == 0:
         where += " and mode = " + str(di["-mode"])
     if di.get("-approved") or di.get("-a"):
@@ -286,7 +353,13 @@ def build_where_clause(di, table=None):
         else:
             where += " and approved between 1 and 2"
     if di.get("-date"):
-            where += " and beatmaps.approved_date >= '" + check_date_string(str(di["-date"])) + " 00:00:00' and beatmaps.approved_date <= '" + check_date_string(str(di["-date"])) + " 23:59:59'"
+        where += (
+            " and beatmaps.approved_date >= '"
+            + check_date_string(str(di["-date"]))
+            + " 00:00:00' and beatmaps.approved_date <= '"
+            + check_date_string(str(di["-date"]))
+            + " 23:59:59'"
+        )
     if di.get("-is_fc"):
         if di.get("-o") and di["-o"] == "ppv1":
             if str(di["-is_fc"]).lower() == "true":
@@ -337,9 +410,15 @@ def build_where_clause(di, table=None):
         if di.get("-m"):
             di["-mods"] = di["-m"]
         if di.get("-notscorestable") and di["-notscorestable"] == "true":
-            where += " and moddedsr.mods_enum = '" + str(get_mods_enum(di["-mods"].upper(), True)) + "'"
+            where += (
+                " and moddedsr.mods_enum = '"
+                + str(get_mods_enum(di["-mods"].upper(), True))
+                + "'"
+            )
         else:
-            where += " and enabled_mods = '" + str(get_mods_enum(di["-mods"].upper())) + "'"
+            where += (
+                " and enabled_mods = '" + str(get_mods_enum(di["-mods"].upper())) + "'"
+            )
     if di.get("-is"):
         mod_list = wrap(di["-is"], 2)
         for mod in mod_list:
@@ -389,7 +468,7 @@ def build_where_clause(di, table=None):
         where += " and multiplier != " + str(not_multiplier_value)
     if di.get("-rank"):
         if int(di["-rank"]) == 1:
-            #where += " and beatmaps.beatmap_id in (select beatmap_id from top_score where user_id = " + str(di["-user"]) + ")"
+            # where += " and beatmaps.beatmap_id in (select beatmap_id from top_score where user_id = " + str(di["-user"]) + ")"
             where += " and scores.user_id = firsts.user_id"
     if di.get("-letters") or di.get("-letter"):
         if di.get("-letter"):
@@ -434,7 +513,12 @@ def build_where_clause(di, table=None):
         where += " and users2.playcount < " + str(di["-playcount-max"])
     if di.get("-playcount-range"):
         range = str(di["-playcount-range"]).split("-")
-        where += " and users2.playcount >= " + range[0] + " and users2.playcount < " + range[1]
+        where += (
+            " and users2.playcount >= "
+            + range[0]
+            + " and users2.playcount < "
+            + range[1]
+        )
     if di.get("-joined-start"):
         where += " and users2.join_date > '" + str(di["-joined-start"]) + " 00:00:00'"
     if di.get("-joined-end"):
@@ -489,72 +573,107 @@ def build_where_clause(di, table=None):
             di["-scorepersecond"] = di["-scorepersecond-min"]
         where += " and (top_score.top_score / length) >= " + str(di["-scorepersecond"])
     if di.get("-scorepersecond-max"):
-        where += " and (top_score.top_score / length) < " + str(di["-scorepersecond-max"])
+        where += " and (top_score.top_score / length) < " + str(
+            di["-scorepersecond-max"]
+        )
     if di.get("-nomodscorepersecond") or di.get("-nomodscorepersecond-min"):
         if di.get("-nomodscorepersecond-min"):
             di["-nomodscorepersecond"] = di["-nomodscorepersecond-min"]
-        where += " and (top_score_nomod.top_score_nomod / length) >= " + str(di["-nomodscorepersecond"])
+        where += " and (top_score_nomod.top_score_nomod / length) >= " + str(
+            di["-nomodscorepersecond"]
+        )
     if di.get("-nomodscorepersecond-max"):
-        where += " and (top_score_nomod.top_score_nomod / length) < " + str(di["-nomodscorepersecond-max"])
+        where += " and (top_score_nomod.top_score_nomod / length) < " + str(
+            di["-nomodscorepersecond-max"]
+        )
     if di.get("-missingscorepersecond") or di.get("-missingscorepersecond-min"):
         if di.get("-missingscorepersecond-min"):
             di["-missingscorepersecond"] = di["-missingscorepersecond-min"]
         if di.get("-unplayed"):
             if di.get("-o") and di["-o"] == "nomodscore":
-                where += " and (top_score_nomod / length) >= " + str(di["-missingscorepersecond"])
+                where += " and (top_score_nomod / length) >= " + str(
+                    di["-missingscorepersecond"]
+                )
             else:
-                where += " and (top_score / length) >= " + str(di["-missingscorepersecond"])
+                where += " and (top_score / length) >= " + str(
+                    di["-missingscorepersecond"]
+                )
         else:
             if di.get("-o") and di["-o"] == "nomodscore":
-                where += " and ((top_score_nomod - score) / length) >= " + str(di["-missingscorepersecond"])
+                where += " and ((top_score_nomod - score) / length) >= " + str(
+                    di["-missingscorepersecond"]
+                )
             else:
-                where += " and ((top_score - score) / length) >= " + str(di["-missingscorepersecond"])
+                where += " and ((top_score - score) / length) >= " + str(
+                    di["-missingscorepersecond"]
+                )
     if di.get("-missingscorepersecond-max"):
         if di.get("-unplayed"):
             if di.get("-o") and di["-o"] == "nomodscore":
-                where += " and (top_score_nomod / length) >= " + str(di["-missingscorepersecond-max"])
+                where += " and (top_score_nomod / length) >= " + str(
+                    di["-missingscorepersecond-max"]
+                )
             else:
-                where += " and (top_score / length) >= " + str(di["-missingscorepersecond-max"])
+                where += " and (top_score / length) >= " + str(
+                    di["-missingscorepersecond-max"]
+                )
         else:
             if di.get("-o") and di["-o"] == "nomodscore":
-                where += " and ((top_score_nomod - score) / length) >= " + str(di["-missingscorepersecond-max"])
+                where += " and ((top_score_nomod - score) / length) >= " + str(
+                    di["-missingscorepersecond-max"]
+                )
             else:
-                where += " and ((top_score - score) / length) >= " + str(di["-missingscorepersecond-max"])
+                where += " and ((top_score - score) / length) >= " + str(
+                    di["-missingscorepersecond-max"]
+                )
     if di.get("-acc-max"):
         where += " and scores.accuracy < " + str(di["-acc-max"])
     if di.get("-acc-min"):
         where += " and scores.accuracy >= " + str(di["-acc-min"])
     if di.get("-acc-range"):
         range = str(di["-acc-range"]).split("-")
-        where += " and scores.accuracy >= " + range[0] + " and scores.accuracy < " + range[1]
+        where += (
+            " and scores.accuracy >= " + range[0] + " and scores.accuracy < " + range[1]
+        )
     if di.get("-miss-max"):
         where += " and scores.countmiss < " + str(di["-miss-max"])
     if di.get("-miss-min"):
         where += " and scores.countmiss >= " + str(di["-miss-min"])
     if di.get("-miss-range"):
         range = str(di["-miss-range"]).split("-")
-        where += " and scores.countmiss >= " + range[0] + " and scores.countmiss < " + range[1]
+        where += (
+            " and scores.countmiss >= "
+            + range[0]
+            + " and scores.countmiss < "
+            + range[1]
+        )
     if di.get("-300-max"):
         where += " and scores.count300 < " + str(di["-300-max"])
     if di.get("-300-min"):
         where += " and scores.count300 >= " + str(di["-300-min"])
     if di.get("-300-range"):
         range = str(di["-300-range"]).split("-")
-        where += " and scores.count300 >= " + range[0] + " and scores.count300 < " + range[1]
+        where += (
+            " and scores.count300 >= " + range[0] + " and scores.count300 < " + range[1]
+        )
     if di.get("-100-max"):
         where += " and scores.count100 < " + str(di["-100-max"])
     if di.get("-100-min"):
         where += " and scores.count100 >= " + str(di["-100-min"])
     if di.get("-100-range"):
         range = str(di["-100-range"]).split("-")
-        where += " and scores.count100 >= " + range[0] + " and scores.count100 < " + range[1]
+        where += (
+            " and scores.count100 >= " + range[0] + " and scores.count100 < " + range[1]
+        )
     if di.get("-50-max"):
         where += " and scores.count50 < " + str(di["-50-max"])
     if di.get("-50-min"):
         where += " and scores.count50 >= " + str(di["-50-min"])
     if di.get("-50-range"):
         range = str(di["-50-range"]).split("-")
-        where += " and scores.count50 >= " + range[0] + " and scores.count50 < " + range[1]
+        where += (
+            " and scores.count50 >= " + range[0] + " and scores.count50 < " + range[1]
+        )
     if di.get("-fc-max"):
         where += " and fc_count < " + str(di["-fc-max"])
     if di.get("-fc-min"):
@@ -575,16 +694,31 @@ def build_where_clause(di, table=None):
     if di.get("-ss-range"):
         range = str(di["-ss-range"]).split("-")
         if di.get("-leastssed") and di["-leastssed"] == "true":
-            where += " and ss_count.ss_count >= " + + range[0] + " and ss_count.ss_count < " + range[1]
+            where += (
+                " and ss_count.ss_count >= "
+                + +range[0]
+                + " and ss_count.ss_count < "
+                + range[1]
+            )
         else:
-            where += " and ss_count + ssh_count >= " + range[0] + " and ss_count + ssh_count < " + range[1]
+            where += (
+                " and ss_count + ssh_count >= "
+                + range[0]
+                + " and ss_count + ssh_count < "
+                + range[1]
+            )
     if di.get("-s-max"):
         where += " and s_count + sh_count < " + str(di["-s-max"])
     if di.get("-s-min"):
         where += " and s_count + sh_count >= " + str(di["-s-min"])
     if di.get("-s-range"):
         range = str(di["-s-range"]).split("-")
-        where += " and s_count + sh_count >= " + range[0] + " and s_count + sh_count < " + range[1]
+        where += (
+            " and s_count + sh_count >= "
+            + range[0]
+            + " and s_count + sh_count < "
+            + range[1]
+        )
     if di.get("-a-max"):
         where += " and a_count < " + str(di["-a-max"])
     if di.get("-a-min"):
@@ -593,14 +727,27 @@ def build_where_clause(di, table=None):
         range = str(di["-a-range"]).split("-")
         where += " and a_count >= " + range[0] + " and a_count < " + range[1]
     if di.get("-clears-max"):
-        where += " and s_count + sh_count + ss_count + ssh_count + a_count < " + str(di["-clears-max"])
+        where += " and s_count + sh_count + ss_count + ssh_count + a_count < " + str(
+            di["-clears-max"]
+        )
     if di.get("-clears-min"):
-        where += " and s_count + sh_count + ss_count + ssh_count + a_count >= " + str(di["-clears-min"])
+        where += " and s_count + sh_count + ss_count + ssh_count + a_count >= " + str(
+            di["-clears-min"]
+        )
     if di.get("-clears-range"):
         range = str(di["-clears-range"]).split("-")
-        where += " and s_count + sh_count + ss_count + ssh_count + a_count >= " + range[0] + " and s_count + sh_count + ss_count + ssh_count + a_count < " + range[1]
+        where += (
+            " and s_count + sh_count + ss_count + ssh_count + a_count >= "
+            + range[0]
+            + " and s_count + sh_count + ss_count + ssh_count + a_count < "
+            + range[1]
+        )
     if di.get("-unplayed") and di["-unplayed"] == "true":
-        where += " and beatmaps.beatmap_id not in (select beatmap_id from scores where user_id = " + str(di["-user"]) + ")"
+        where += (
+            " and beatmaps.beatmap_id not in (select beatmap_id from scores where user_id = "
+            + str(di["-user"])
+            + ")"
+        )
     if di.get("-ssed-by"):
         users = str(di["-ssed-by"]).replace("+", " ")
         users = users.replace("'", "")
@@ -610,9 +757,17 @@ def build_where_clause(di, table=None):
             for i, user in enumerate(users):
                 users[i] = f"'{user}'"
             users = ",".join(users)
-            where += " and beatmaps.beatmap_id in (select beatmap_id from scores inner join users2 on scores.user_id = users2.user_id where LOWER(users2.username) in (" + users + ") and rank like '%X%')"
+            where += (
+                " and beatmaps.beatmap_id in (select beatmap_id from scores inner join users2 on scores.user_id = users2.user_id where LOWER(users2.username) in ("
+                + users
+                + ") and rank like '%X%')"
+            )
         else:
-            where += " and beatmaps.beatmap_id in (select beatmap_id from scores where user_id in (" + users + ") and rank like '%X%')"
+            where += (
+                " and beatmaps.beatmap_id in (select beatmap_id from scores where user_id in ("
+                + users
+                + ") and rank like '%X%')"
+            )
     if di.get("-cleared-by"):
         users = str(di["-cleared-by"]).replace("+", " ")
         users = users.replace("'", "")
@@ -622,9 +777,17 @@ def build_where_clause(di, table=None):
             for i, user in enumerate(users):
                 users[i] = f"'{user}'"
             users = ",".join(users)
-            where += " and beatmaps.beatmap_id in (select beatmap_id from scores inner join users2 on scores.user_id = users2.user_id where LOWER(users2.username) in (" + users + "))"
+            where += (
+                " and beatmaps.beatmap_id in (select beatmap_id from scores inner join users2 on scores.user_id = users2.user_id where LOWER(users2.username) in ("
+                + users
+                + "))"
+            )
         else:
-            where += " and beatmaps.beatmap_id in (select beatmap_id from scores where user_id in (" + users + "))"
+            where += (
+                " and beatmaps.beatmap_id in (select beatmap_id from scores where user_id in ("
+                + users
+                + "))"
+            )
     if di.get("-uncleared-by"):
         users = str(di["-uncleared-by"]).replace("+", " ")
         users = users.replace("'", "")
@@ -634,9 +797,17 @@ def build_where_clause(di, table=None):
             for i, user in enumerate(users):
                 users[i] = f"'{user}'"
             users = ",".join(users)
-            where += " and beatmaps.beatmap_id not in (select beatmap_id from scores inner join users2 on scores.user_id = users2.user_id where LOWER(users2.username) in (" + users + "))"
+            where += (
+                " and beatmaps.beatmap_id not in (select beatmap_id from scores inner join users2 on scores.user_id = users2.user_id where LOWER(users2.username) in ("
+                + users
+                + "))"
+            )
         else:
-            where += " and beatmaps.beatmap_id not in (select beatmap_id from scores where user_id in (" + users + "))"
+            where += (
+                " and beatmaps.beatmap_id not in (select beatmap_id from scores where user_id in ("
+                + users
+                + "))"
+            )
     if di.get("-ar"):
         where += " and ar = " + str(di["-ar"])
     if di.get("-ar-max"):
@@ -749,10 +920,29 @@ def build_where_clause(di, table=None):
         where += " and (spinners + sliders + circles) >= " + str(di["-objects-min"])
     if di.get("-objects-range"):
         range = str(di["-objects-range"]).split("-")
-        where += " and (spinners + sliders + circles) >= " + range[0] + " and (spinners + sliders + circles) < " + range[1]
+        where += (
+            " and (spinners + sliders + circles) >= "
+            + range[0]
+            + " and (spinners + sliders + circles) < "
+            + range[1]
+        )
     if di.get("-tags"):
         tag = str(di["-tags"]).lower()
-        where += " AND (LOWER(source) LIKE '%" + tag + "%' OR LOWER(tags) LIKE '%" + tag + "%' OR LOWER(artist) LIKE '%" + tag + "%' OR LOWER(beatmaps.title) LIKE '%" + tag + "%' OR LOWER(creator) LIKE '%" + tag + "%' OR LOWER(diffname) LIKE '%" + tag + "%')"
+        where += (
+            " AND (LOWER(source) LIKE '%"
+            + tag
+            + "%' OR LOWER(tags) LIKE '%"
+            + tag
+            + "%' OR LOWER(artist) LIKE '%"
+            + tag
+            + "%' OR LOWER(beatmaps.title) LIKE '%"
+            + tag
+            + "%' OR LOWER(creator) LIKE '%"
+            + tag
+            + "%' OR LOWER(diffname) LIKE '%"
+            + tag
+            + "%')"
+        )
     if di.get("-genre"):
         where += " and genre = " + str(di["-genre"])
     if di.get("-language"):
@@ -783,19 +973,37 @@ def build_where_clause(di, table=None):
             pack = str(di["-pack"])
         where += " and LOWER(pack_id) = '" + pack.lower() + "'"
     if di.get("-pack-min"):
-        where += " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) >= '" + str(di["-pack-min"]).lower() + "'"
+        where += (
+            " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) >= '"
+            + str(di["-pack-min"]).lower()
+            + "'"
+        )
     if di.get("-pack-max"):
-        where += " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) <= '" + str(di["-pack-max"]).lower() + "'"
+        where += (
+            " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) <= '"
+            + str(di["-pack-max"]).lower()
+            + "'"
+        )
     if di.get("-packs"):
         range = str(di["-packs"]).split("-")
         if len(range) == 1:
             range *= 2
-        where += " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) >= " + range[0] + " and cast(substr(pack_id, 2, 10) as integer) <= " + range[1]
+        where += (
+            " and pack_id ~ '^S\d+$' and cast(substr(pack_id, 2, 10) as integer) >= "
+            + range[0]
+            + " and cast(substr(pack_id, 2, 10) as integer) <= "
+            + range[1]
+        )
     if di.get("-apacks"):
         range = str(di["-apacks"]).split("-")
         if len(range) == 1:
             range *= 2
-        where += " and pack_id ~ '^SA\d+$' and cast(substr(pack_id, 3, 10) as integer) >= " + range[0] + " and cast(substr(pack_id, 3, 10) as integer) <= " + range[1]
+        where += (
+            " and pack_id ~ '^SA\d+$' and cast(substr(pack_id, 3, 10) as integer) >= "
+            + range[0]
+            + " and cast(substr(pack_id, 3, 10) as integer) <= "
+            + range[1]
+        )
     if di.get("-tragedy"):
         if di["-tragedy"] == "100":
             where += " and (count100 = 1 and countmiss = 0 and count50 = 0)"
@@ -811,11 +1019,19 @@ def build_where_clause(di, table=None):
         if str(di["-o"]).lower() == "ppv1":
             where += " and scores_top.pp > 0.001"
         if di["-o"] == "nomodnumberones":
-            where += " and beatmaps.beatmap_id in (select beatmap_id from top_score_nomod where user_id = " + str(di["-user"]) + ")"
+            where += (
+                " and beatmaps.beatmap_id in (select beatmap_id from top_score_nomod where user_id = "
+                + str(di["-user"])
+                + ")"
+            )
         if di["-o"] == "hiddennumberones":
-            where += " and beatmaps.beatmap_id in (select beatmap_id from top_score_nomod_hidden where user_id = " + str(di["-user"]) + ")"
+            where += (
+                " and beatmaps.beatmap_id in (select beatmap_id from top_score_nomod_hidden where user_id = "
+                + str(di["-user"])
+                + ")"
+            )
 
     if where != "":
         where = " where " + where[4:]
-    
+
     return where

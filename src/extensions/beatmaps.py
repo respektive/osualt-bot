@@ -3,11 +3,12 @@ from discord.ext import commands
 from utils.helpers import get_args
 from sql.queries import check_beatmaps, get_beatmap_list
 
+
 class Beatmaps(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
-    @commands.command(aliases=['b'])
+
+    @commands.command(aliases=["b"])
     async def beatmaps(self, ctx, *args):
         """Returns statistics of a set of beatmaps"""
         kwargs = get_args(args)
@@ -18,7 +19,7 @@ class Beatmaps(commands.Cog):
         answer = await check_beatmaps(ctx, kwargs, None, False)
         await ctx.reply(answer)
 
-    @commands.command(aliases=['bs', 'bsets'])
+    @commands.command(aliases=["bs", "bsets"])
     async def beatmapsets(self, ctx, *args):
         """Returns statistics of beatmap sets"""
         kwargs = get_args(args)
@@ -29,8 +30,7 @@ class Beatmaps(commands.Cog):
         answer = await check_beatmaps(ctx, kwargs, None, True)
         await ctx.reply(answer)
 
-
-    @commands.command(aliases=['bl'])
+    @commands.command(aliases=["bl"])
     async def beatmaplist(self, ctx, *args):
         """Lists every osu! standard map"""
         kwargs = get_args(args)
@@ -44,7 +44,7 @@ class Beatmaps(commands.Cog):
 
         await get_beatmap_list(ctx, kwargs)
 
-    @commands.command(aliases=['bsl'])
+    @commands.command(aliases=["bsl"])
     async def beatmapsetlist(self, ctx, *args):
         """Lists every osu! standard mapset"""
         kwargs = get_args(args)
@@ -67,7 +67,13 @@ class Beatmaps(commands.Cog):
         if not (kwargs.get("-direction") or kwargs.get("-dir")):
             kwargs["-direction"] = "desc"
 
-        await get_beatmap_list(ctx, kwargs, None, True, "DATE_PART('day', beatmaps.approved_date - submit_date)")
+        await get_beatmap_list(
+            ctx,
+            kwargs,
+            None,
+            True,
+            "DATE_PART('day', beatmaps.approved_date - submit_date)",
+        )
 
     @commands.command()
     async def leastplayed(self, ctx, *args):
@@ -122,7 +128,7 @@ class Beatmaps(commands.Cog):
         answer = await check_beatmaps(ctx, kwargs, None, False)
         await ctx.reply(f"Max combo: {answer:,}")
 
-    @commands.command(aliases=['nbss'])
+    @commands.command(aliases=["nbss"])
     async def neverbeenssed(self, ctx, *args):
         """Returns a list of maps that have never been SSed that are at least 30 days old."""
         kwargs = get_args(args)
@@ -131,11 +137,13 @@ class Beatmaps(commands.Cog):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if not kwargs.get("-end"):
-            kwargs["-end"] = (datetime.datetime.today() - datetime.timedelta(days=29)).strftime('%Y-%m-%d')
+            kwargs["-end"] = (
+                datetime.datetime.today() - datetime.timedelta(days=29)
+            ).strftime("%Y-%m-%d")
 
         await get_beatmap_list(ctx, kwargs, ["neverbeenssed"])
 
-    @commands.command(aliases=['nbfc'])
+    @commands.command(aliases=["nbfc"])
     async def neverbeenfced(self, ctx, *args):
         """Returns a list of maps that have never been FCed that are at least 7 days old."""
         kwargs = get_args(args)
@@ -144,11 +152,13 @@ class Beatmaps(commands.Cog):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if not kwargs.get("-end"):
-            kwargs["-end"] = (datetime.datetime.today() - datetime.timedelta(days=6)).strftime('%Y-%m-%d')
+            kwargs["-end"] = (
+                datetime.datetime.today() - datetime.timedelta(days=6)
+            ).strftime("%Y-%m-%d")
 
         await get_beatmap_list(ctx, kwargs, ["neverbeenfced"])
 
-    @commands.command(aliases=['nbdt'])
+    @commands.command(aliases=["nbdt"])
     async def neverbeendted(self, ctx, *args):
         """Returns a list of maps that have never been DTed."""
         kwargs = get_args(args)
@@ -157,7 +167,9 @@ class Beatmaps(commands.Cog):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if not kwargs.get("-end"):
-            kwargs["-end"] = (datetime.datetime.today() - datetime.timedelta(days=6)).strftime('%Y-%m-%d')
+            kwargs["-end"] = (
+                datetime.datetime.today() - datetime.timedelta(days=6)
+            ).strftime("%Y-%m-%d")
 
         await get_beatmap_list(ctx, kwargs, ["neverbeendted"])
 
@@ -200,7 +212,9 @@ class Beatmaps(commands.Cog):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if not kwargs.get("-end"):
-            kwargs["-end"] = (datetime.datetime.today() - datetime.timedelta(days=29)).strftime('%Y-%m-%d')
+            kwargs["-end"] = (
+                datetime.datetime.today() - datetime.timedelta(days=29)
+            ).strftime("%Y-%m-%d")
         if not kwargs.get("-order"):
             kwargs["-order"] = "fc_count, stars"
 
@@ -216,7 +230,9 @@ class Beatmaps(commands.Cog):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if not kwargs.get("-end"):
-            kwargs["-end"] = (datetime.datetime.today() - datetime.timedelta(days=29)).strftime('%Y-%m-%d')
+            kwargs["-end"] = (
+                datetime.datetime.today() - datetime.timedelta(days=29)
+            ).strftime("%Y-%m-%d")
         if not kwargs.get("-order"):
             kwargs["-order"] = "ss_count, stars"
 
@@ -231,7 +247,9 @@ class Beatmaps(commands.Cog):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if not kwargs.get("-end"):
-            kwargs["-end"] = (datetime.datetime.today() - datetime.timedelta(days=29)).strftime('%Y-%m-%d')
+            kwargs["-end"] = (
+                datetime.datetime.today() - datetime.timedelta(days=29)
+            ).strftime("%Y-%m-%d")
         if not kwargs.get("-order"):
             kwargs["-order"] = "avg_acc"
 
@@ -246,7 +264,9 @@ class Beatmaps(commands.Cog):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if not kwargs.get("-end"):
-            kwargs["-end"] = (datetime.datetime.today() - datetime.timedelta(days=29)).strftime('%Y-%m-%d')
+            kwargs["-end"] = (
+                datetime.datetime.today() - datetime.timedelta(days=29)
+            ).strftime("%Y-%m-%d")
         if not kwargs.get("-order"):
             kwargs["-order"] = "days"
         if not kwargs.get("-direction"):
@@ -263,13 +283,16 @@ class Beatmaps(commands.Cog):
             if not kwargs.get("-modded"):
                 kwargs["-modded"] = "true"
         if not kwargs.get("-end"):
-            kwargs["-end"] = (datetime.datetime.today() - datetime.timedelta(days=29)).strftime('%Y-%m-%d')
+            kwargs["-end"] = (
+                datetime.datetime.today() - datetime.timedelta(days=29)
+            ).strftime("%Y-%m-%d")
         if not kwargs.get("-order"):
             kwargs["-order"] = "stars"
         if not kwargs.get("-direction"):
             kwargs["-order"] = "desc"
 
         await get_beatmap_list(ctx, kwargs, ["capped"], False)
+
 
 async def setup(bot):
     await bot.add_cog(Beatmaps(bot))

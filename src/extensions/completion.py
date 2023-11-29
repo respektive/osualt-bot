@@ -2,10 +2,11 @@ from discord.ext import commands
 from utils.helpers import get_args
 from sql.queries import get_completion, get_pack_completion
 
+
 class Completion(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-    
+
     @commands.command(aliases=["ac", "arc"])
     async def ar_completion(self, ctx, *args):
         """AR completion board for a single user"""
@@ -48,7 +49,9 @@ class Completion(commands.Cog):
         kwargs = get_args(args)
         await get_completion(ctx, "grade", kwargs)
 
-    @commands.command(aliases=["rank_breakdown", "letter_breakdown", "letters", "ranks", "grades"])
+    @commands.command(
+        aliases=["rank_breakdown", "letter_breakdown", "letters", "ranks", "grades"]
+    )
     async def grade_breakdown(self, ctx, *args):
         """Grade Breakdown board for a single user"""
         kwargs = get_args(args)
@@ -77,6 +80,7 @@ class Completion(commands.Cog):
         """Pack completion board for a single user"""
         kwargs = get_args(args)
         await get_pack_completion(ctx, kwargs)
+
 
 async def setup(bot):
     await bot.add_cog(Completion(bot))
