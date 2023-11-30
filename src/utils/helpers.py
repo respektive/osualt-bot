@@ -293,9 +293,11 @@ def build_where_clause(di, table=None):
             di["-year"] = di["-y"]
         where += (
             " and beatmaps.approved_date >= '"
-            + check_date_string(str(di["-year"]) + "-01-01 00:00:00")
+            + check_date_string(str(di["-year"]) + "-01-01")
+            + " 00:00:00"
             + "' and beatmaps.approved_date <= '"
-            + check_date_string(str(di["-year"]) + "-12-31 23:59:59")
+            + check_date_string(str(di["-year"]) + "-12-31")
+            + " 23:59:59"
             + "'"
         )
     if di.get("-start"):
@@ -319,9 +321,11 @@ def build_where_clause(di, table=None):
     if di.get("-played-date"):
         where += (
             " and date_played >= '"
-            + check_date_string(str(di["-played-date"]) + " 00:00:00")
+            + check_date_string(str(di["-played-date"]))
+            + " 00:00:00"
             + "' and date_played <= '"
-            + check_date_string(str(di["-played-date"]) + " 23:59:59")
+            + check_date_string(str(di["-played-date"]))
+            + " 23:59:59"
             + "'"
         )
     if di.get("-b"):
