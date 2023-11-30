@@ -1181,7 +1181,7 @@ async def get_completion(ctx, type, di):
                 "420-480",
                 "480-540",
                 "540-600",
-                "600-99999",
+                "600-5999",
             ]
         title = "Length Completion"
         range_arg = "length"
@@ -1336,18 +1336,13 @@ async def get_completion(ctx, type, di):
 
         if type == "length":
             start, end = map(int, rng.split("-"))
-            start_minutes = (
-                start // 60
-                if not "-g" in di and not "-l" in di
-                else round(start / 60, 2)
-            )
-            end_minutes = (
-                end // 60 if not "-g" in di and not "-l" in di else round(end / 60, 2)
-            )
-            if rng == "600-99999":
-                rng = "10 min+"
-            else:
-                rng = f"{start_minutes}-{end_minutes} min"
+            start_minutes, start_seconds = divmod(start, 60)
+            end_minutes, end_seconds = divmod(end, 60)
+
+            start_time = f"{start_minutes:02d}:{start_seconds:02d}"
+            end_time = f"{end_minutes:02d}:{end_seconds:02d}"
+
+            rng = f"{start_time}-{end_time}"
         elif not type == "stars" and rng == "10-11":
             rng = "10+"
         elif type == "stars":
