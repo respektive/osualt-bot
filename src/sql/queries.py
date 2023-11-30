@@ -1473,20 +1473,21 @@ async def get_pack_completion(ctx, di):
             pack_start, pack_end = map(int, packs.split("-"))
             for pack in range(pack_start, pack_end + 1):
                 pack_id = f"SA{pack}" if approved else f"S{pack}"
-                beatmap_count += beatmap_packs.get(pack_id, {"beatmap_count": 0})[
-                    "beatmap_count"
-                ]
-                scores_count += beatmap_packs.get(pack_id, {"scores_count": 0})[
-                    "scores_count"
-                ]
+                beatmap_count += (
+                    beatmap_packs.get(pack_id, {"beatmap_count": 0})["beatmap_count"]
+                    or 0
+                )
+                scores_count += (
+                    beatmap_packs.get(pack_id, {"scores_count": 0})["scores_count"] or 0
+                )
         else:
             pack_id = f"SA{packs.lstrip('0')}" if approved else f"S{packs.lstrip('0')}"
-            beatmap_count += beatmap_packs.get(pack_id, {"beatmap_count": 0})[
-                "beatmap_count"
-            ]
-            scores_count += beatmap_packs.get(pack_id, {"scores_count": 0})[
-                "scores_count"
-            ]
+            beatmap_count += (
+                beatmap_packs.get(pack_id, {"beatmap_count": 0})["beatmap_count"] or 0
+            )
+            scores_count += (
+                beatmap_packs.get(pack_id, {"scores_count": 0})["scores_count"] or 0
+            )
 
         if int(beatmap_count) > 0:
             completion = int(scores_count) / int(beatmap_count) * 100
