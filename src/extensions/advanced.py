@@ -224,16 +224,6 @@ class Advanced(commands.Cog):
                     "Lazer Standardised Score without mod multipliers",
                 )
 
-            elif kwargs["-o"] == "lazerscore_test":
-                kwargs["-o"] = "lazerscore"
-                await check_tables(
-                    ctx,
-                    f"SUM(POW((({standardised} / {max_score}) * {totalHitObjects}), 1.8) * mods.multiplier * 128)",
-                    "scores",
-                    kwargs,
-                    "Lazer Classic Score Testing",
-                )
-
             elif kwargs["-o"] == "agedscore":
                 await check_tables(
                     ctx,
