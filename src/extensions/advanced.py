@@ -100,8 +100,17 @@ class Advanced(commands.Cog):
         if not kwargs.get("-registered"):
             kwargs["-registered"] = "true"
 
-        standardised = "(((((50 * scores.count50 + 100 * scores.count100 + 300 * scores.count300) / (300 * scores.count50 + 300 * scores.count100 + 300 * scores.count300 + 300 * scores.countmiss)::float) * 300000) + ((scores.combo/beatmaps.maxcombo::float)*700000)) * mods.multiplier)"
-        standardised_nomod = "((((50 * scores.count50 + 100 * scores.count100 + 300 * scores.count300) / (300 * scores.count50 + 300 * scores.count100 + 300 * scores.count300 + 300 * scores.countmiss)::float) * 300000) + ((scores.combo/beatmaps.maxcombo::float)*700000))"
+        combo_score_multiplier = "500000"
+        acc_score_multipülier = "500000"
+
+        accuracy_formula = "((50 * scores.count50 + 100 * scores.count100 + 300 * scores.count300) / (300 * scores.count50 + 300 * scores.count100 + 300 * scores.count300 + 300 * scores.countmiss)::float)"
+        combo_formula = "(scores.combo/beatmaps.maxcombo::float)"
+
+        standardised_formula = f"""({combo_score_multiplier} * {accuracy_formula} * {combo_formula}) + 
+                                ({acc_score_multipülier} * ({accuracy_formula} ^ 5))"""
+
+        standardised = f"({standardised_formula} * mods.multiplier)"
+        standardised_nomod = f"({standardised_formula})"
         max_score = "1000000"
         totalHitObjects = "(beatmaps.circles + beatmaps.spinners + beatmaps.sliders)"
 
@@ -190,7 +199,7 @@ class Advanced(commands.Cog):
             elif kwargs["-o"] == "lazerscore":
                 await check_tables(
                     ctx,
-                    f"SUM((POW((({standardised} / {max_score}) * {totalHitObjects}), 2) * 36)::int)",
+                    f"SUM((POW((({standardised} / {max_score}) * {totalHitObjects}), 2) * 32.57 + 100000)::bigint)",
                     "scores",
                     kwargs,
                     "Lazer Classic Score",
@@ -199,7 +208,7 @@ class Advanced(commands.Cog):
             elif kwargs["-o"] == "lazerscore_nomod":
                 await check_tables(
                     ctx,
-                    f"SUM(POW((({standardised_nomod} / {max_score}) * {totalHitObjects}), 2) * 36)",
+                    f"SUM((POW((({standardised_nomod} / {max_score}) * {totalHitObjects}), 2) * 32.57 + 100000)::bigint)",
                     "scores",
                     kwargs,
                     "Lazer Classic Score without mod multipliers",
