@@ -273,7 +273,7 @@ async def getfile(ctx, di):
             type = f"select {columns} from scores inner join beatmaps on scores.beatmap_id = beatmaps.beatmap_id left join moddedsr on beatmaps.beatmap_id = moddedsr.beatmap_id and moddedsr.mods_enum = (case when is_ht = 'true' then 256 else 0 end + case when is_dt = 'true' then 64 else 0 end + case when is_hr = 'true' then 16 else 0 end + case when is_ez = 'true' then 2 else 0 end + case when is_fl = 'true' then 1024 else 0 end)"
             type = (
                 type
-                + " inner join (select beatmap_id, pack_id, STRING_AGG(pack_id, ',') as packs from beatmap_packs group by beatmap_id, pack_id) bp on beatmaps.beatmap_id = bp.beatmap_id "
+                + " inner join (select beatmap_id, STRING_AGG(pack_id, ',') as packs from beatmap_packs group by beatmap_id) bp on beatmaps.beatmap_id = bp.beatmap_id "
             )
             type = type + where
     elif di["-type"] == "scoresimple":
