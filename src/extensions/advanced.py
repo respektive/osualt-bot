@@ -33,12 +33,16 @@ class Advanced(commands.Cog):
         if not kwargs.get("-registered"):
             kwargs["-registered"] = "false"
 
+        tables = []
+        if kwargs.get("-order") == "fc_count":
+            tables.append("fc_count")
+        if kwargs.get("-order") == "ss_count":
+            tables.append("ss_count")
+
         if kwargs.get("-unplayed"):
-            await get_beatmap_list(ctx, kwargs, ["fc_count", "ss_count"])
+            await get_beatmap_list(ctx, kwargs, tables)
         else:
-            await get_beatmap_list(
-                ctx, kwargs, ["scores", "mods", "fc_count", "ss_count"]
-            )
+            await get_beatmap_list(ctx, kwargs, ["scores", "mods"] + tables)
 
     @commands.command()
     async def missingscore(self, ctx, *args):
