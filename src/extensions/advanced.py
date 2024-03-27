@@ -105,7 +105,7 @@ class Advanced(commands.Cog):
             kwargs["-registered"] = "true"
 
         user_id = await get_user_id(ctx, kwargs)
-        if user_id is not None and not kwargs.get("-user"):
+        if user_id is not None and not kwargs.get("-user") and kwargs.get("-nolist"):
             kwargs["-user"] = user_id
 
         combo_score_multiplier = "500000"
