@@ -104,6 +104,10 @@ class Advanced(commands.Cog):
         if not kwargs.get("-registered"):
             kwargs["-registered"] = "true"
 
+        user_id = await get_user_id(ctx, kwargs)
+        if user_id is not None:
+            kwargs["-user"] = user_id
+
         combo_score_multiplier = "500000"
         acc_score_multipülier = "500000"
 
