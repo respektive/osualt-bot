@@ -114,18 +114,27 @@ async def generateosdb(ctx, di):
             )
 
     if di["-mode"] == "0":
-        query = (
-            query + " inner join fc_count on beatmaps.beatmap_id = fc_count.beatmap_id"
-        )
-        count = (
-            count + " inner join fc_count on beatmaps.beatmap_id = fc_count.beatmap_id"
-        )
-        query = (
-            query + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
-        )
-        count = (
-            count + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
-        )
+        if di.get("-fc-min") or di.get("-fc-max") or di.get("-fc-range"):
+            query = (
+                query
+                + " inner join fc_count on beatmaps.beatmap_id = fc_count.beatmap_id"
+            )
+            count = (
+                count
+                + " inner join fc_count on beatmaps.beatmap_id = fc_count.beatmap_id"
+            )
+        if (di.get("-ss-min") or di.get("-ss-max") or di.get("-ss-range")) and not (
+            di.get("-u") and di.get("-missingscore")
+        ):
+            di["-leastssed"] = "true"
+            query = (
+                query
+                + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
+            )
+            count = (
+                count
+                + " inner join ss_count on beatmaps.beatmap_id = ss_count.beatmap_id"
+            )
 
         if (
             di.get("-pack")
