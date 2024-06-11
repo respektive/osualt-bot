@@ -159,7 +159,7 @@ class Advanced(commands.Cog):
                     await check_tables(
                         ctx,
                         """SUM(CASE
-                            WHEN scores.is_dt THEN beatmaps.length / 1.5
+                            WHEN scores.is_dt OR scores.is_nc THEN beatmaps.length / 1.5
                             WHEN scores.is_ht THEN beatmaps.length / 0.75
                             ELSE beatmaps.length
                         END)""",
