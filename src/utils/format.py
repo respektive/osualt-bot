@@ -70,3 +70,20 @@ def format_leaderboard(rows, di=""):
     embed.description = s + "```"
 
     return embed
+
+
+def format_footer(datasource="", query_execution_time=0, embed_description=""):
+    datasource_text = (
+        "Scores in the database" if datasource == "scores" else "Profile Stats"
+    )
+    footer_text = f"Based on {datasource_text} • took {query_execution_time}s"
+
+    lines = embed_description.split("\n")
+    if len(lines) > 1:
+        text_width = len(max(lines, key=len))
+        footer_width = int(len(footer_text) / 3.6)
+        if text_width > footer_width:
+            difference = text_width - footer_width
+            footer_text += "᲼" * difference
+
+    return footer_text

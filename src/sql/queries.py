@@ -11,7 +11,7 @@ from utils.helpers import (
     get_mods_string,
     normalize_year,
 )
-from utils.format import format_leaderboard
+from utils.format import format_leaderboard, format_footer
 
 db = Database()
 
@@ -170,8 +170,9 @@ async def get_mapper_leaderboard(ctx, stat, title, **kwargs):
     embed = format_leaderboard(rows, kwargs)
 
     embed.title = title
+    footer_text = format_footer("profile", query_execution_time, embed.description)
     embed.set_footer(
-        text=f"Based on Profile Stats • took {query_execution_time}s",
+        text=footer_text,
         icon_url="https://pek.li/maj7qa.png",
     )
 
@@ -186,8 +187,9 @@ async def get_profile_leaderboard(ctx, stat, title, **kwargs):
     embed = format_leaderboard(rows, kwargs)
 
     embed.title = title
+    footer_text = format_footer("profile", query_execution_time, embed.description)
     embed.set_footer(
-        text=f"Based on Profile Stats • took {query_execution_time}s",
+        text=footer_text,
         icon_url="https://pek.li/maj7qa.png",
     )
 
@@ -229,8 +231,9 @@ async def check_array_stats(ctx, operation, table, aggregate, di, title=None):
 
     embed = format_leaderboard(rows, di)
     embed.title = title
+    footer_text = format_footer("profile", query_execution_time, embed.description)
     embed.set_footer(
-        text=f"Based on Profile Stats • took {query_execution_time}s",
+        text=footer_text,
         icon_url="https://pek.li/maj7qa.png",
     )
 
@@ -389,8 +392,9 @@ async def check_tables(ctx, operation, table, di, embedtitle=None):
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
+    footer_text = format_footer("scores", query_execution_time, embed.description)
     embed.set_footer(
-        text=f"Based on Scores in the database • took {query_execution_time}s",
+        text=footer_text,
         icon_url="https://pek.li/maj7qa.png",
     )
 
@@ -574,8 +578,9 @@ async def check_weighted_pp(ctx, operation, di, embedtitle=None):
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
+    footer_text = format_footer("scores", query_execution_time, embed.description)
     embed.set_footer(
-        text=f"Based on Scores in the database • took {query_execution_time}s",
+        text=footer_text,
         icon_url="https://pek.li/maj7qa.png",
     )
 
@@ -636,8 +641,9 @@ async def check_weighted_score(ctx, operation, di, embedtitle=None):
 
     embed = format_leaderboard(rows, di)
     embed.title = embedtitle
+    footer_text = format_footer("scores", query_execution_time, embed.description)
     embed.set_footer(
-        text=f"Based on Scores in the database • took {query_execution_time}s",
+        text=footer_text,
         icon_url="https://pek.li/maj7qa.png",
     )
 
@@ -668,9 +674,9 @@ async def get_beatmap_list(
         if di["-order"] == "agedscore":
             if not di.get("-direction") or di.get("-dir"):
                 di["-direction"] = "desc"
-            di[
-                "-order"
-            ] = "score * (DATE_PART('year', NOW() - approved_date) + DATE_PART('day', NOW() - approved_date) / 365.2425)"
+            di["-order"] = (
+                "score * (DATE_PART('year', NOW() - approved_date) + DATE_PART('day', NOW() - approved_date) / 365.2425)"
+            )
         if di["-order"] == "lazerscore":
             if not di.get("-direction") or di.get("-dir"):
                 di["-direction"] = "desc"
@@ -679,9 +685,9 @@ async def get_beatmap_list(
             totalHitObjects = (
                 "(beatmaps.circles + beatmaps.spinners + beatmaps.sliders)"
             )
-            di[
-                "-order"
-            ] = f"(POW((({standardised} / {max_score}) * {totalHitObjects}), 2) * 36)::int"
+            di["-order"] = (
+                f"(POW((({standardised} / {max_score}) * {totalHitObjects}), 2) * 36)::int"
+            )
         if (
             di["-order"] == "score"
             or di["-order"] == "pp"
@@ -1379,8 +1385,9 @@ async def get_completion(ctx, type, di):
         title=f"{title} for {username or user_id}", colour=discord.Colour(0xCC5288)
     )
     embed.description = description
+    footer_text = format_footer("scores", query_execution_time, embed.description)
     embed.set_footer(
-        text=f"Based on Scores in the database • took {query_execution_time}s",
+        text=footer_text,
         icon_url="https://pek.li/maj7qa.png",
     )
     await ctx.reply(embed=embed)
@@ -1507,8 +1514,9 @@ async def get_pack_completion(ctx, di):
         colour=discord.Colour(0xCC5288),
     )
     embed.description = description
+    footer_text = format_footer("scores", query_execution_time, embed.description)
     embed.set_footer(
-        text=f"Based on Scores in the database • took {query_execution_time}s",
+        text=footer_text,
         icon_url="https://pek.li/maj7qa.png",
     )
     await ctx.reply(embed=embed)
