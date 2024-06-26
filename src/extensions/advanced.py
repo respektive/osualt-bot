@@ -63,7 +63,7 @@ class Advanced(commands.Cog):
             kwargs["-direction"] = kwargs["-dir"] = "desc"
 
         if kwargs.get("-unplayed"):
-            if kwargs.get("-o") and kwargs["-o"] == "nomodscore":
+            if kwargs.get("-o") == "nomodscore":
                 await get_beatmap_list(
                     ctx,
                     kwargs,
@@ -72,18 +72,40 @@ class Advanced(commands.Cog):
                     ("max(top_score_nomod) as missing_score"),
                     True,
                 )
+            elif kwargs.get("-o") == "lazerscore":
+                await get_beatmap_list(
+                    ctx,
+                    kwargs,
+                    None,
+                    False,
+                    (
+                        "(pow(circles + sliders + spinners, 2) * 32.57 +100000)::bigint as missing_score"
+                    ),
+                    True,
+                )
             else:
                 await get_beatmap_list(
                     ctx, kwargs, None, False, ("max(top_score) as missing_score"), True
                 )
         else:
-            if kwargs.get("-o") and kwargs["-o"] == "nomodscore":
+            if kwargs.get("-o") == "nomodscore":
                 await get_beatmap_list(
                     ctx,
                     kwargs,
                     ["scores"],
                     False,
                     ("max(top_score_nomod - score) as missing_score"),
+                    True,
+                )
+            elif kwargs.get("-o") == "lazerscore":
+                await get_beatmap_list(
+                    ctx,
+                    kwargs,
+                    None,
+                    False,
+                    (
+                        "(pow(circles + sliders + spinners, 2) * 32.57 +100000)::bigint as missing_score"
+                    ),
                     True,
                 )
             else:
@@ -482,9 +504,9 @@ class Advanced(commands.Cog):
         kwargs = get_args(args)
         kwargs["-float"] = "true"
         if not kwargs.get("-o"):
-            kwargs[
-                "-o"
-            ] = "sum(scores.count300+scores.count100*0.3333+scores.count50*0.1667)*pow(sum(scores.count300+scores.count100+scores.count50+scores.countmiss),-1)*100"
+            kwargs["-o"] = (
+                "sum(scores.count300+scores.count100*0.3333+scores.count50*0.1667)*pow(sum(scores.count300+scores.count100+scores.count50+scores.countmiss),-1)*100"
+            )
         if not kwargs.get("-precision"):
             kwargs["-precision"] = "5"
 
@@ -523,9 +545,9 @@ class Advanced(commands.Cog):
         kwargs = get_args(args)
         kwargs["-float"] = "true"
         if not kwargs.get("-o"):
-            kwargs[
-                "-o"
-            ] = "(cast(sum(case when (countmiss = 0 and (maxcombo - combo) <= scores.count100 or rank like '%X%') then 1 else 0 end) as float)/cast(count(*) as float) * 100)"
+            kwargs["-o"] = (
+                "(cast(sum(case when (countmiss = 0 and (maxcombo - combo) <= scores.count100 or rank like '%X%') then 1 else 0 end) as float)/cast(count(*) as float) * 100)"
+            )
         if not kwargs.get("-percentage"):
             kwargs["-percentage"] = "true"
 
@@ -539,9 +561,9 @@ class Advanced(commands.Cog):
         kwargs = get_args(args)
         kwargs["-float"] = "true"
         if not kwargs.get("-o"):
-            kwargs[
-                "-o"
-            ] = "(cast(sum(case when rank like '%X%' then 1 else 0 end) as float)/cast(count(*) as float) * 100)"
+            kwargs["-o"] = (
+                "(cast(sum(case when rank like '%X%' then 1 else 0 end) as float)/cast(count(*) as float) * 100)"
+            )
         if not kwargs.get("-percentage"):
             kwargs["-percentage"] = "true"
 
@@ -555,9 +577,9 @@ class Advanced(commands.Cog):
         kwargs = get_args(args)
         kwargs["-float"] = "true"
         if not kwargs.get("-o"):
-            kwargs[
-                "-o"
-            ] = "(cast(sum(case when rank like '%S%' then 1 else 0 end) as float)/cast(count(*) as float) * 100)"
+            kwargs["-o"] = (
+                "(cast(sum(case when rank like '%S%' then 1 else 0 end) as float)/cast(count(*) as float) * 100)"
+            )
         if not kwargs.get("-percentage"):
             kwargs["-percentage"] = "true"
 
@@ -571,9 +593,9 @@ class Advanced(commands.Cog):
         kwargs = get_args(args)
         kwargs["-float"] = "true"
         if not kwargs.get("-o"):
-            kwargs[
-                "-o"
-            ] = "(cast(sum(case when rank like 'A' then 1 else 0 end) as float)/cast(count(*) as float) * 100)"
+            kwargs["-o"] = (
+                "(cast(sum(case when rank like 'A' then 1 else 0 end) as float)/cast(count(*) as float) * 100)"
+            )
         if not kwargs.get("-percentage"):
             kwargs["-percentage"] = "true"
 
