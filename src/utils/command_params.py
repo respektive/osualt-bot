@@ -27,7 +27,8 @@ BEATMAP_PARAMS = """```ahk
 -apacks: specify a range of approved packs
 -approved: approved status (1 = ranked, 2 = approved, 4 = loved)
 -loved: true, to include loved maps
--b: specify a beatmap id
+-b: specify a beatmap id or list of beatmap ids
+-not-b: specify a beatmap id or list of beatmap ids to exclude
 -b-min/max/range: min/max/range of beatmap ids
 ```"""
 
