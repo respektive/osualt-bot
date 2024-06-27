@@ -328,6 +328,8 @@ def build_where_clause(di, table=None):
             + " 23:59:59"
             + "'"
         )
+    if di.get("-not-b"):
+        where += " and beatmaps.beatmap_id not in (" + str(di["-not-b"]) + ")"
     if di.get("-b"):
         where += " and beatmaps.beatmap_id in (" + str(di["-b"]) + ")"
     if di.get("-b-min"):
