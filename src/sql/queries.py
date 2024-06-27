@@ -908,7 +908,7 @@ async def get_beatmap_list(
     if missingScore:
         query = (
             query
-            + " group by set_id, beatmaps.beatmap_id, artist, title, diffname, stars"
+            + " group by set_id, beatmaps.beatmap_id, artist, title, diffname, stars, score"
         )
         total_missing_query = query
     query = (

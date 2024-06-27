@@ -101,10 +101,10 @@ class Advanced(commands.Cog):
                 await get_beatmap_list(
                     ctx,
                     kwargs,
-                    None,
+                    ["scores"],
                     False,
                     (
-                        "(pow(circles + sliders + spinners, 2) * 32.57 +100000)::bigint as missing_score"
+                        "((pow(circles + sliders + spinners, 2) * 32.57 +100000)::bigint - score) as missing_score"
                     ),
                     True,
                 )
