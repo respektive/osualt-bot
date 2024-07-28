@@ -753,12 +753,19 @@ def build_where_clause(di, table=None):
             + " and s_count + sh_count + ss_count + ssh_count + a_count < "
             + range[1]
         )
-    if di.get("-unplayed") and di["-unplayed"] == "true":
-        where += (
-            " and beatmaps.beatmap_id not in (select beatmap_id from scores where user_id = "
-            + str(di["-user"])
-            + ")"
-        )
+    if di.get("-unplayed") == "true":
+        if di.get("-o") == "sets":
+            where += (
+                " and beatmaps.set_id not in (select set_id from scores inner join beatmaps using (beatmap_id) where user_id = "
+                + str(di["-user"])
+                + ")"
+            )
+        else:
+            where += (
+                " and beatmaps.beatmap_id not in (select beatmap_id from scores where user_id = "
+                + str(di["-user"])
+                + ")"
+            )
     if di.get("-ssed-by"):
         users = str(di["-ssed-by"]).replace("+", " ")
         users = users.replace("'", "")
