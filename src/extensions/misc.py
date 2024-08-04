@@ -39,6 +39,10 @@ class Misc(commands.Cog):
             await ctx.reply("Please specify a beatmap_id.")
             return
         user_id = await get_user_id(ctx, kwargs)
+        if not user_id:
+            await ctx.reply("Unknown user.")
+            return
+
         beatmap_id = int(kwargs["-b"])
         await insert_into_scorequeue(beatmap_id, user_id)
         await ctx.reply("Queued!")
