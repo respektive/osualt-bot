@@ -350,12 +350,12 @@ def build_where_clause(di, table=None):
         if di.get("-a"):
             di["-approved"] = di["-a"]
         if di["-approved"] == "4":
-            where += " and approved = 4 and beatmaps.beatmap_id not in (184846,1265925,1355907,2562022,1510266,2571051)"
+            where += " and approved = 4"
         else:
             where += " and approved = " + str(di["-approved"])
     elif di.get("-loved"):
         if di["-loved"] == "true":
-            where += " and approved in (1,2,4) and beatmaps.beatmap_id not in (184846,1265925,1355907,2562022,1510266,2571051)"
+            where += " and approved in (1,2,4)"
         else:
             where += " and approved between 1 and 2"
     if di.get("-date"):
