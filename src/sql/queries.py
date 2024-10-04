@@ -1110,7 +1110,7 @@ async def get_completion(ctx, type, di):
             int(rounded)
             if ".0" in str(rounded)
             and (not "-g" in di and not "-l" in di)
-            or (type == "combo" or type == "length")
+            or (type == "combo" or type == "length" or type == "objects")
             else rounded
         )
         return rounded
@@ -1249,19 +1249,20 @@ async def get_completion(ctx, type, di):
         range_arg = "DATE_PART('day', approved_date)"
         prefix = ""
     elif type == "objects":
-        ranges = [
-            "0-100",
-            "100-200",
-            "200-300",
-            "300-400",
-            "400-500",
-            "500-600",
-            "600-700",
-            "700-800",
-            "800-900",
-            "900-1000",
-            "1000-20000",
-        ]
+        if not "-g" in di and not "-l" in di:
+            ranges = [
+                "0-100",
+                "100-200",
+                "200-300",
+                "300-400",
+                "400-500",
+                "500-600",
+                "600-700",
+                "700-800",
+                "800-900",
+                "900-1000",
+                "1000-20000",
+            ]
         title = "Object Completion"
         range_arg = "circles + sliders + spinners"
         prefix = ""
