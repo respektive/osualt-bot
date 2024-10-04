@@ -1151,7 +1151,7 @@ async def get_completion(ctx, type, di):
                 "7-8",
                 "8-9",
                 "9-10",
-                "10-20",
+                "10-999",
             ]
         title = "Stars Completion"
         range_arg = "stars"
@@ -1374,7 +1374,7 @@ async def get_completion(ctx, type, di):
         elif not type == "stars" and rng == "10-11":
             rng = "10+"
         elif type == "stars":
-            if rng == "10-20":
+            if rng == "10-999":
                 rng = "10★+"
             else:
                 start, end = rng.split("-")
