@@ -1110,7 +1110,7 @@ async def get_completion(ctx, type, di):
             int(rounded)
             if ".0" in str(rounded)
             and (not "-g" in di and not "-l" in di)
-            or (type == "combo" or type == "length")
+            or (type == "combo" or type == "length" or type == "objects")
             else rounded
         )
         return rounded
@@ -1248,6 +1248,24 @@ async def get_completion(ctx, type, di):
         title = f"Daily Completion - {calendar.month_name[month]} {year}"
         range_arg = "DATE_PART('day', approved_date)"
         prefix = ""
+    elif type == "objects":
+        if not "-g" in di and not "-l" in di:
+            ranges = [
+                "0-100",
+                "100-200",
+                "200-300",
+                "300-400",
+                "400-500",
+                "500-600",
+                "600-700",
+                "700-800",
+                "800-900",
+                "900-1000",
+                "1000-99999",
+            ]
+        title = "Object Completion"
+        range_arg = "circles + sliders + spinners"
+        prefix = ""
 
     query_start_time = time.time()
 
@@ -1369,6 +1387,9 @@ async def get_completion(ctx, type, di):
                 rng = f"{start}-{end}x"
         elif type == "monthly":
             rng = calendar.month_abbr[rng]
+        elif type == "objects":
+            if rng == "1000-99999":
+                rng = "1000+"
 
         completion_percent = (
             f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
