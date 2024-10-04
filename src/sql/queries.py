@@ -1261,7 +1261,7 @@ async def get_completion(ctx, type, di):
                 "700-800",
                 "800-900",
                 "900-1000",
-                "1000-20000",
+                "1000-99999",
             ]
         title = "Object Completion"
         range_arg = "circles + sliders + spinners"
@@ -1387,6 +1387,9 @@ async def get_completion(ctx, type, di):
                 rng = f"{start}-{end}x"
         elif type == "monthly":
             rng = calendar.month_abbr[rng]
+        elif type == "objects":
+            if rng == "1000-99999":
+                rng = "1000+"
 
         completion_percent = (
             f"{completion:06.3f}" if completion < 100 else f"{completion:,.2f}"
