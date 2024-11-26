@@ -664,6 +664,12 @@ async def get_beatmap_list(
     order = "stars"
     direction = "asc"
     unique_table = None
+
+    user_id = await get_user_id(ctx, di)
+    if user_id == 647309 and not ctx.message.author.id == 131558221717438475:
+        await ctx.reply("It's a secret. 🤫")
+        return
+
     if di.get("-order"):
         if di["-order"] == "date":
             di["-order"] = "date_played"
