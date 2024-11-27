@@ -1582,7 +1582,7 @@ async def get_user_id(ctx, args):
             return None
     else:
         user_id = args["-u"]
-        return user_id
+        return int(user_id)
 
 
 async def build_leaderboard(ctx, base, di, user=None):
