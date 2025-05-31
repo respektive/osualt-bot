@@ -48,10 +48,6 @@ async def generateosdb(ctx, di):
     # if user_id is None:
     #     raise ValueError("Please specify a user using '-u'. If username doesn't work, try using the user_id instead.")
 
-    if user_id == 647309 and not ctx.message.author.id == 131558221717438475:
-        await ctx.reply("It's a secret. 🤫")
-        return
-
     if di.get("-unplayed"):
         if not di.get("-o"):
             di["-o"] = "score"
@@ -259,10 +255,6 @@ async def generateosdb(ctx, di):
 async def getfile(ctx, di):
     user_id = await get_user_id(ctx, di)
     username = await get_username(user_id)
-
-    if user_id == 647309 and not ctx.message.author.id == 131558221717438475:
-        await ctx.reply("It's a secret. 🤫")
-        return
 
     if not di.get("-user") and di["-type"] != "beatmaps":
         di["-user"] = user_id

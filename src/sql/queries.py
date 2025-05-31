@@ -664,12 +664,6 @@ async def get_beatmap_list(
     order = "stars"
     direction = "asc"
     unique_table = None
-
-    user_id = await get_user_id(ctx, di)
-    if user_id == 647309 and not ctx.message.author.id == 131558221717438475:
-        await ctx.reply("It's a secret. 🤫")
-        return
-
     if di.get("-order"):
         if di["-order"] == "date":
             di["-order"] = "date_played"
@@ -1096,10 +1090,6 @@ async def get_completion(ctx, type, di):
     user_id = await get_user_id(ctx, di)
     username = await get_username(user_id)
 
-    if user_id == 647309 and not ctx.message.author.id == 131558221717438475:
-        await ctx.reply("It's a secret. 🤫")
-        return
-
     if user_id is None:
         raise ValueError(
             "Please specify a user using '-u'. If username doesn't work, try using the user_id instead."
@@ -1430,10 +1420,6 @@ async def get_pack_completion(ctx, di):
     user_id = await get_user_id(ctx, di)
     username = await get_username(user_id)
     di["-mode"] = "0"
-
-    if user_id == 647309 and not ctx.message.author.id == 131558221717438475:
-        await ctx.reply("It's a secret. 🤫")
-        return
 
     # Parse args
     approved = int(di.get("-approved", di.get("-a", 1))) == 2
