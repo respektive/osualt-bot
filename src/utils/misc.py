@@ -355,9 +355,9 @@ async def getfile(ctx, di):
 
     with open("tmp.txt", "rb") as file:
         file_size = os.path.getsize("tmp.txt")
-        if file_size >= 50000000:
+        if file_size >= 100000000:
             catbox_url = catbox_upload(filename, "tmp.txt")
-            msg = "File is over 50MB, here's a 1h temp link: " + catbox_url
+            msg = "File is over 100MB, here's a 1h temp link: " + catbox_url
             await ctx.reply(msg)
         else:
             await ctx.reply("Your file is:", file=discord.File(file, filename))
